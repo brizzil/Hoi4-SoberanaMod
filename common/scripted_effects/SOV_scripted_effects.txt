@@ -1,0 +1,6434 @@
+#####
+##### PROPAGANDA SYSTEM #####
+#####
+SOV_achievement_propaganda_counter_effect = {
+	if = {
+		limit = {
+			check_variable = { var = propaganda_counter value = 1 compare = less_than }
+		}
+		set_variable = { var = propaganda_counter value = 1 } #setup variable
+	}
+	else = {
+		add_to_variable = {
+			propaganda_counter = 1
+		}
+	}
+}
+SOV_pick_propaganda_campaign_slot_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				check_variable = { SOV_poster_left_icon_frame = SOV_propaganda_empty_slot_index }
+			}
+			set_variable = { SOV_poster_left_icon_frame = SOV_new_propaganda_campaign }
+			#Ageing posters
+			set_variable = { SOV_propaganda_left_poster_to_age = SOV_poster_left_icon_frame } #This is used to prevent the system to break if a propaganda campaign is cancelled
+			hidden_effect = {
+				country_event = { id = NSB_soviet_propaganda_capmaign_events.101 days = SOV_default_propaganda_campaign_old_days }
+				#set_country_flag = { flag = SOV_propaganda_left_days_remaining_flag days = SOV_default_propaganda_campaign_duration } #Surprise! This doesnät work with vars :D  Maybe in the future
+				if = { #Debug -> Faster time
+					limit = {
+						has_country_flag = SOV_debug_fast_propaganda_campaigns_flag
+					}
+					set_country_flag = { flag = SOV_propaganda_left_days_remaining_flag days = 5 }
+				}
+				else = { #Regular time
+					set_country_flag = { flag = SOV_propaganda_left_days_remaining_flag days = 180 } #Need code support to use a var here
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { SOV_poster_center_icon_frame = SOV_propaganda_empty_slot_index }
+			}
+			set_variable = { SOV_poster_center_icon_frame = SOV_new_propaganda_campaign }
+			#Ageing posters
+			set_variable = { SOV_propaganda_center_poster_to_age = SOV_poster_center_icon_frame } #This is used to prevent the system to break if a propaganda campaign is cancelled
+			hidden_effect = {
+				country_event = { id = NSB_soviet_propaganda_capmaign_events.102 days = SOV_default_propaganda_campaign_old_days }
+				#set_country_flag = { flag = SOV_propaganda_center_days_remaining_flag days = SOV_default_propaganda_campaign_duration } #Surprise! This doesnät work with vars :D  Maybe in the future
+				if = { #Debug -> Faster time
+					limit = {
+						has_country_flag = SOV_debug_fast_propaganda_campaigns_flag
+					}
+					set_country_flag = { flag = SOV_propaganda_center_days_remaining_flag days = 5 }
+				}
+				else = { #Regular time
+					set_country_flag = { flag = SOV_propaganda_center_days_remaining_flag days = 180 } #Need code support to use a var here
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { SOV_poster_right_icon_frame = SOV_propaganda_empty_slot_index }
+			}
+			set_variable = { SOV_poster_right_icon_frame = SOV_new_propaganda_campaign }
+			#Ageing posters
+			set_variable = { SOV_propaganda_right_poster_to_age = SOV_poster_right_icon_frame } #This is used to prevent the system to break if a propaganda campaign is cancelled
+			hidden_effect = {
+				country_event = { id = NSB_soviet_propaganda_capmaign_events.103 days = SOV_default_propaganda_campaign_old_days }
+				#set_country_flag = { flag = SOV_propaganda_right_days_remaining_flag days = SOV_default_propaganda_campaign_duration } #Surprise! This doesnät work with vars :D  Maybe in the future
+				if = { #Debug -> Faster time
+					limit = {
+						has_country_flag = SOV_debug_fast_propaganda_campaigns_flag
+					}
+					set_country_flag = { flag = SOV_propaganda_right_days_remaining_flag days = 5 }
+				}
+				else = { #Regular time
+					set_country_flag = { flag = SOV_propaganda_right_days_remaining_flag days = 180 } #Need code support to use a var here
+				}
+			}
+		}
+		set_variable = { SOV_new_propaganda_campaign = 0 } # Reset var
+		add_to_variable = { SOV_propaganda_campaigns_taken = 1 } #Update propaganda campaigns counter
+	}
+}
+
+SOV_reset_propaganda_campaign_slot_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				check_variable = { SOV_poster_left_icon_frame = SOV_propaganda_campaign_to_remove }
+			}
+			set_variable = { SOV_poster_left_icon_frame = SOV_propaganda_empty_slot_index }
+			#Clear aged posters
+			clear_variable = SOV_propaganda_left_poster_to_age
+			clr_country_flag = SOV_propaganda_left_slot_is_old_flag
+		}
+		else_if = {
+			limit = {
+				check_variable = { SOV_poster_center_icon_frame = SOV_propaganda_campaign_to_remove }
+			}
+			set_variable = { SOV_poster_center_icon_frame = SOV_propaganda_empty_slot_index }
+			#Clear aged posters
+			clear_variable = SOV_propaganda_center_poster_to_age
+			clr_country_flag = SOV_propaganda_center_slot_is_old_flag
+		}
+		else_if = { #This could be turned into an else, but leaving it like this to hopefully make it easier to see
+			limit = {
+				check_variable = { SOV_poster_right_icon_frame = SOV_propaganda_campaign_to_remove }
+			}
+			set_variable = { SOV_poster_right_icon_frame = SOV_propaganda_empty_slot_index }
+			#Clear aged posters
+			clear_variable = SOV_propaganda_right_poster_to_age
+			clr_country_flag = SOV_propaganda_right_slot_is_old_flag
+		}
+		set_variable = { SOV_propaganda_campaign_to_remove = 0 } # Reset var
+	}
+}
+
+SOV_unlock_propaganda_campaign_slot_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				check_variable = { SOV_poster_left_icon_frame = SOV_propaganda_locked_slot_index }
+			}
+			set_variable = { SOV_poster_left_icon_frame = SOV_propaganda_empty_slot_index }
+		}
+		else_if = {
+			limit = {
+				check_variable = { SOV_poster_center_icon_frame = SOV_propaganda_locked_slot_index }
+			}
+			set_variable = { SOV_poster_center_icon_frame = SOV_propaganda_empty_slot_index }
+		}
+		else = {
+			set_variable = { SOV_poster_right_icon_frame = SOV_propaganda_empty_slot_index }
+		}
+	}
+}
+
+SOV_increase_propaganda_campaign_cost_effect = {
+	multiply_variable = { SOV_propaganda_cost = SOV_propaganda_cost_increase } #Using generic var SOV_propaganda_cost so that we only need to change this operation to tweak all propagandas' cost escalation
+}
+
+
+
+####
+#### INDUSTRIAL STUFF ####
+####
+
+SOV_replace_industrial_designer = {
+	custom_effect_tooltip = SOV_upgrade_industrial_designer_tt
+	if = {
+		limit = {
+			has_idea = stalingrad_tractor_factory
+		}
+		swap_ideas = {
+			remove_idea = stalingrad_tractor_factory
+			add_idea = stalingrad_tractor_factory_improved
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = leningrad_polytechnical_institute
+		}
+		swap_ideas = {
+			remove_idea = leningrad_polytechnical_institute
+			add_idea = leningrad_polytechnical_institute_improved
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_soviet_railways
+		}
+		swap_ideas = {
+			remove_idea = SOV_soviet_railways
+			add_idea = SOV_soviet_railways_improved
+		}
+	}
+}
+
+
+
+####
+#### FOREIGN POLITICS ####
+####
+
+SOV_fortify_mongolian_border_effect = {
+	330 = {
+		add_building_construction = { #ULAAN BAATAR
+			type = bunker
+			level = 1
+			instant_build = yes
+			province = 4801
+		}
+	}
+	if = {
+		limit = {
+			761 = { #HULUNBUIR
+				controller = {
+					SOV_is_threated_by_japan = yes
+				}
+			}
+		}
+		819 = {
+			add_building_construction = { #BORDER
+				type = bunker
+				level = 2
+				instant_build = yes
+				province = {
+					id = 4792
+					id = 12557
+					id = 1743
+				}
+			}
+		}
+		ROOT = { set_country_flag = SOV_mongolian_forts_1_flag }
+	}
+	if = {
+		limit = {
+			612 = { #CHAHAR
+				controller = {
+					SOV_is_threated_by_japan = yes
+				}
+			}
+		}
+		if = { #Do not repeat same province twice
+			limit = {
+				ROOT = { has_country_flag = SOV_mongolian_forts_1_flag }
+			}
+			819 = {
+				add_building_construction = { #BORDER
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = {
+						id = 12629
+						id = 4873
+					}
+				}
+			}
+		}
+		else = {
+			819 = {
+				add_building_construction = { #BORDER
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = {
+						id = 1743
+						id = 12629
+						id = 4873
+					}
+				}
+			}
+		}
+		817 = {
+			add_building_construction = { #BORDER
+				type = bunker
+				level = 2
+				instant_build = yes
+				province = {
+					id = 10575
+					id = 4655
+				}
+			}
+		}
+		ROOT = { clr_country_flag = SOV_mongolian_forts_1_flag }
+		ROOT = { set_country_flag = SOV_mongolian_forts_2_flag }
+	}
+	if = {
+		limit = {
+			621 = { #SUIYUAN
+				controller = {
+					SOV_is_threated_by_japan = yes
+				}
+			}
+		}
+		if = { #Do not repeat same province twice
+			limit = {
+				ROOT = { has_country_flag = SOV_mongolian_forts_2_flag }
+			}
+			817 = {
+				add_building_construction = { #BORDER
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = {
+						id = 1723
+						id = 1853
+						id = 12539
+						id = 10558
+					}
+				}
+			}
+		}
+		else = {
+			817 = {
+				add_building_construction = { #BORDER
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = {
+						id = 4655
+						id = 1723
+						id = 1853
+						id = 12539
+						id = 10558
+					}
+				}
+			}
+		}
+		ROOT = { clr_country_flag = SOV_mongolian_forts_2_flag }
+		ROOT = { set_country_flag = SOV_mongolian_forts_3_flag }
+	}
+	if = {
+		limit = {
+			756 = { #JIUQUAN
+				controller = {
+					SOV_is_threated_by_japan = yes
+				}
+			}
+		}
+		if = { #Do not repeat same province twice
+			limit = {
+				ROOT = { has_country_flag = SOV_mongolian_forts_3_flag }
+			}
+			817 = {
+				add_building_construction = { #BORDER
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = {
+						id = 10689
+						id = 4786
+						id = 1781
+					}
+				}
+			}
+		}
+		else = {
+			817 = {
+				add_building_construction = { #BORDER
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = {
+						id = 10558
+						id = 10689
+						id = 4786
+						id = 1781
+					}
+				}
+			}
+		}
+		ROOT = { clr_country_flag = SOV_mongolian_forts_3_flag }
+		ROOT = { set_country_flag = SOV_mongolian_forts_4_flag }
+	}
+	if = {
+		limit = {
+			760 = { #DABANCHENG
+				controller = {
+					SOV_is_threated_by_japan = yes
+				}
+			}
+		}
+		if = { #Do not repeat same province twice
+			limit = {
+				ROOT = { has_country_flag = SOV_mongolian_forts_4_flag }
+			}
+			817 = {
+				add_building_construction = { #BORDER
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = {
+						id = 10560
+						id = 1855
+					}
+				}
+			}
+		}
+		else = {
+			817 = {
+				add_building_construction = { #BORDER
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = {
+						id = 1781
+						id = 10560
+						id = 1855
+					}
+				}
+			}
+		}
+		817 = {
+			add_building_construction = { #BORDER
+				type = bunker
+				level = 2
+				instant_build = yes
+				province = {
+					id = 7808
+				}
+			}
+		}
+		ROOT = { clr_country_flag = SOV_mongolian_forts_4_flag }
+		ROOT = { set_country_flag = SOV_mongolian_forts_5_flag }
+	}
+	if = {
+		limit = {
+			618 = { #DZUNGARIA
+				controller = {
+					SOV_is_threated_by_japan = yes
+				}
+			}
+		}
+		if = { #Do not repeat same province twice
+			limit = {
+				ROOT = { has_country_flag = SOV_mongolian_forts_5_flag }
+			}
+			818 = {
+				add_building_construction = { #BORDER
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = {
+						id = 7870
+						id = 1774
+						id = 10539
+						id = 4751
+					}
+				}
+			}
+		}
+		else = {
+			818 = {
+				add_building_construction = { #BORDER
+					type = bunker
+					level = 2
+					instant_build = yes
+					province = {
+						id = 7808
+						id = 7870
+						id = 1774
+						id = 10539
+						id = 4751
+					}
+				}
+			}
+		}
+		ROOT = { clr_country_flag = SOV_mongolian_forts_5_flag }
+	}
+}
+
+SOV_clear_targeted_relation_modifiers_effect = {
+	#log = "Effect Called"
+	every_other_country = {
+		limit = {
+			capital_scope = { is_on_continent = europe }
+			SOV = {
+				has_relation_modifier = {
+					target = PREV
+					modifier = SOV_face_western_fascism_static
+				}
+			}
+		}
+		#log = "Removing shit in [THIS.GetName]"
+		SOV = {
+			remove_relation_modifier = {
+				target = PREV
+				modifier = SOV_face_western_fascism_static
+			}
+		}
+	}
+	#log = "------- SPACE -------"
+	GER = {
+		SOV = {
+			remove_relation_modifier = {
+				target = PREV
+				modifier = SOV_face_western_fascism_static
+			}
+			#log = "[GER.getname] is now clean"
+		}
+	}
+}
+
+SOV_clear_hidden_targeted_ns_effect = {
+	if = {
+		limit = {
+			has_idea = SOV_targeted_bonus_against_ENG
+		}
+		add_ideas = SOV_targeted_bonus_against_ENG
+	}
+	if = {
+		limit = {
+			has_idea = SOV_targeted_bonus_against_FRA
+		}
+		add_ideas = SOV_targeted_bonus_against_FRA
+	}
+	if = {
+		limit = {
+			has_idea = SOV_targeted_bonus_against_GER
+		}
+		add_ideas = SOV_targeted_bonus_against_GER
+	}
+	if = {
+		limit = {
+			has_idea = SOV_targeted_bonus_against_ITA
+		}
+		add_ideas = SOV_targeted_bonus_against_ITA
+	}
+	if = {
+		limit = {
+			has_idea = SOV_targeted_bonus_against_USA
+		}
+		add_ideas = SOV_targeted_bonus_against_USA
+	}
+	if = {
+		limit = {
+			has_idea = SOV_targeted_bonus_against_JAP
+		}
+		add_ideas = SOV_targeted_bonus_against_JAP
+	}
+}
+
+SOV_foreign_politics_decision_cost_reduction_effect = { #Add more diplomacy vars here to divide and round them
+	divide_variable = { SOV_pressure_country_government_cost = 2 }
+	divide_variable = { SOV_promote_ideology_rallies_cost = 2 }
+	divide_variable = { SOV_send_ultimatum_to_country_cost = 2 }
+	divide_variable = { SOV_send_infantry_equipment_cost = 2 }
+	divide_variable = { SOV_peace_deal_cost = 2 }
+	divide_variable = { SOV_sinkiang_proposal_cost = 2 }
+
+	round_variable = SOV_pressure_country_government_cost
+	round_variable = SOV_promote_ideology_rallies_cost
+	round_variable = SOV_send_ultimatum_to_country_cost
+	round_variable = SOV_send_infantry_equipment_cost
+	round_variable = SOV_peace_deal_cost
+	round_variable = SOV_sinkiang_proposal_cost
+}
+
+SOV_approach_sinkiang_diplomacy_effect = {
+	add_ai_strategy = {
+		type = befriend
+		id = SIK			
+		value = 15
+	}
+	add_ai_strategy = {
+		type = alliance
+		id = SIK		
+		value = 15
+	}
+	SIK = {
+		add_ai_strategy = {
+			type = befriend
+			id = SOV			
+			value = 10
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = CHI		
+			value = -5
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = PRC		
+			value = -5
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = XSM		
+			value = -5
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = SHX		
+			value = -5
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = YUN		
+			value = -5
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = GXC		
+			value = -5
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = MEN		
+			value = -5
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = MAN		
+			value = -5
+		}
+	}
+}
+
+SOV_set_appropriate_national_academy_of_sciences_flag_effect = {
+	#log = "ROOT is [ROOT.GetName]"
+	#log = "FROM is [FROM.GetName]"
+	if = {
+		limit = {
+			FROM = { tag = BLR }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_BLR_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = UKR }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_UKR_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = KAZ }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_KAZ_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = GEO }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_GEO_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = ARM }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_ARM_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = AZR }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_AZR_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = UZB }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_UZB_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = TMS }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_TMS_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = KYR }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_KYR_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = TAJ }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_TAJ_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = TAN }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_TAN_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = DON }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_DON_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = KUB }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_KUB_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = EST }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_EST_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = LAT }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_LAT_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = LIT }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_LIT_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = POL }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_POL_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = FIN }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_FIN_flag }
+	}
+	else_if = {
+		limit = {
+			FROM = { tag = MON }
+		}
+		ROOT = { set_country_flag = SOV_national_academy_of_sciences_built_MON_flag }
+	}
+
+	# Add any new cosmetics/releasables here! (and also decisions for them) ((and also scripted triggers)) (((please just do not add any more cosmetics/releasables...)))
+}
+
+SOV_build_national_academy_of_sciences_effect = {
+	if = {
+		limit = {
+			country_exists = FROM
+		}
+		custom_effect_tooltip = SOV_national_academy_of_sciences_construction_independent_tt
+	}
+	else = {
+		custom_effect_tooltip = SOV_national_academy_of_sciences_construction_integrated_tt
+	}
+	ROOT = {
+		custom_effect_tooltip = SOV_national_academy_of_sciences_research_tt
+		add_to_variable = { SOV_academy_of_sciences_research_speed_factor = SOV_national_academy_of_sciences_research_increase }
+	}
+}
+
+
+SOV_clear_hostile_diplomacy_in_both_countries = { #It assumes you want to clear claims and wargoals against each other in both ROOT and FROM
+	#First clear ROOT
+	if = {
+		limit = {
+			any_owned_state = {
+				is_claimed_by = FROM
+			}
+		}
+		every_owned_state = {
+			limit = {
+				is_claimed_by = FROM
+			}
+			remove_claim_by = FROM
+		}
+	}
+	if = {
+		limit = {
+			FROM = { has_wargoal_against = ROOT }
+		}
+		FROM = {
+			remove_wargoal = {
+				type = all
+				target = ROOT
+			}
+		}
+	}
+
+	#Now clear FROM
+	if = {
+		limit = {
+			FROM = {
+				any_owned_state = {
+					is_claimed_by = ROOT
+				}
+			}
+		}
+		FROM = {
+			every_owned_state = {
+				limit = {
+					is_claimed_by = ROOT
+				}
+				remove_claim_by = ROOT
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_wargoal_against = FROM
+		}
+		remove_wargoal = {
+			type = all
+			target = FROM
+		}
+	}
+}
+
+SOV_clear_hostile_diplomacy_in_all_three_countries = { #It assumes you want to clear claims and wargoals against each other in ROOT, FROM and POL
+	#First clear ROOT
+	if = {
+		limit = {
+			any_owned_state = {
+				is_claimed_by = FROM
+			}
+		}
+		every_owned_state = {
+			limit = {
+				is_claimed_by = FROM
+			}
+			remove_claim_by = FROM
+		}
+	}
+	if = {
+		limit = {
+			any_owned_state = {
+				is_claimed_by = POL
+			}
+		}
+		every_owned_state = {
+			limit = {
+				is_claimed_by = POL
+			}
+			remove_claim_by = POL
+		}
+	}
+	if = {
+		limit = {
+			FROM = { has_wargoal_against = ROOT }
+		}
+		FROM = {
+			remove_wargoal = {
+				type = all
+				target = ROOT
+			}
+		}
+	}
+	if = {
+		limit = {
+			POL = { has_wargoal_against = ROOT }
+		}
+		POL = {
+			remove_wargoal = {
+				type = all
+				target = ROOT
+			}
+		}
+	}
+
+	#Now clear FROM
+	if = {
+		limit = {
+			FROM = {
+				any_owned_state = {
+					is_claimed_by = ROOT
+				}
+			}
+		}
+		FROM = {
+			every_owned_state = {
+				limit = {
+					is_claimed_by = ROOT
+				}
+				remove_claim_by = ROOT
+			}
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				any_owned_state = {
+					is_claimed_by = POL
+				}
+			}
+		}
+		FROM = {
+			every_owned_state = {
+				limit = {
+					is_claimed_by = POL
+				}
+				remove_claim_by = POL
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_wargoal_against = FROM
+		}
+		remove_wargoal = {
+			type = all
+			target = FROM
+		}
+	}
+	if = {
+		limit = {
+			POL = { has_wargoal_against = FROM }
+		}
+		POL = {
+			remove_wargoal = {
+				type = all
+				target = FROM
+			}
+		}
+	}
+
+	#Finally, clear POL
+	if = {
+		limit = {
+			POL = {
+				any_owned_state = {
+					is_claimed_by = ROOT
+				}
+			}
+		}
+		POL = {
+			every_owned_state = {
+				limit = {
+					is_claimed_by = ROOT
+				}
+				remove_claim_by = ROOT
+			}
+		}
+	}
+	if = {
+		limit = {
+			POL = {
+				any_owned_state = {
+					is_claimed_by = FROM
+				}
+			}
+		}
+		POL = {
+			every_owned_state = {
+				limit = {
+					is_claimed_by = FROM
+				}
+				remove_claim_by = FROM
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_wargoal_against = POL
+		}
+		remove_wargoal = {
+			type = all
+			target = POL
+		}
+	}
+	if = {
+		limit = {
+			FROM = { has_wargoal_against = POL }
+		}
+		FROM = {
+			remove_wargoal = {
+				type = all
+				target = POL
+			}
+		}
+	}
+}
+
+SOV_apply_collective_ageement_on_mutual_assistance_effects_basic = {
+	SOV_clear_hostile_diplomacy_in_both_countries = yes #Clears wargoals and claims
+
+	#FRA -> SOV
+	FROM = {
+		diplomatic_relation = {
+			country = ROOT
+			relation = non_aggression_pact
+			active = yes
+		}
+		give_guarantee = ROOT
+		add_opinion_modifier = {
+			target = ROOT
+			modifier = SOV_policies_of_collective_security_opinion
+		}
+	}
+
+	#SOV -> FRA
+	diplomatic_relation = {
+		country = FROM
+		relation = non_aggression_pact
+		active = yes
+	}
+	give_guarantee = FROM
+	add_opinion_modifier = {
+		target = FROM
+		modifier = SOV_policies_of_collective_security_opinion
+	}
+}
+
+
+SOV_apply_collective_ageement_on_mutual_assistance_effects_poland_included = {
+	SOV_clear_hostile_diplomacy_in_all_three_countries = yes #Clears wargoals and claims in all three countries
+
+	#SOV -> FRA
+	diplomatic_relation = {
+		country = FROM
+		relation = non_aggression_pact
+		active = yes
+	}
+	give_guarantee = FROM
+	add_opinion_modifier = {
+		target = FROM
+		modifier = SOV_policies_of_collective_security_opinion
+	}
+
+	#SOV -> POL
+	diplomatic_relation = {
+		country = POL
+		relation = non_aggression_pact
+		active = yes
+	}
+	give_guarantee = POL
+	add_opinion_modifier = {
+		target = POL
+		modifier = SOV_policies_of_collective_security_opinion
+	}
+
+	#FRA -> SOV
+	FROM = {
+		diplomatic_relation = {
+			country = ROOT
+			relation = non_aggression_pact
+			active = yes
+		}
+		give_guarantee = ROOT
+		add_opinion_modifier = {
+			target = ROOT
+			modifier = SOV_policies_of_collective_security_opinion
+		}
+	}
+
+	#FRA -> POL
+	FROM = {
+		diplomatic_relation = {
+			country = POL
+			relation = non_aggression_pact
+			active = yes
+		}
+		give_guarantee = POL
+		add_opinion_modifier = {
+			target = POL
+			modifier = SOV_policies_of_collective_security_opinion
+		}
+	}
+
+	#POL -> SOV
+	POL = {
+		diplomatic_relation = {
+			country = ROOT
+			relation = non_aggression_pact
+			active = yes
+		}
+		give_guarantee = ROOT
+		add_opinion_modifier = {
+			target = ROOT
+			modifier = SOV_policies_of_collective_security_opinion
+		}
+	}
+
+	#POL -> FRA
+	POL = {
+		diplomatic_relation = {
+			country = FROM
+			relation = non_aggression_pact
+			active = yes
+		}
+		give_guarantee = FROM
+		add_opinion_modifier = {
+			target = FROM
+			modifier = SOV_policies_of_collective_security_opinion
+		}
+	}
+}
+
+SOV_set_military_offensive_effect = {
+	set_country_flag = SOV_military_offensive_in_progress_flag
+	for_each_scope_loop = {
+		array = SOV_military_offensive_states
+		add_dynamic_modifier = {
+			modifier = SOV_soviet_military_offensive
+			days = 90
+			scope = SOV
+		}
+	}
+}
+
+SOV_clean_military_offensive_effect = {
+	clr_country_flag = SOV_military_offensive_in_progress_flag
+	for_each_scope_loop = {
+		array = SOV_military_offensive_states
+		remove_dynamic_modifier = { modifier = SOV_soviet_military_offensive }
+	}
+	clear_array = SOV_military_offensive_states
+	clear_variable = SOV_offensive_main_objective
+}
+
+SOV_spawn_penal_divisions_effect = {
+	hidden_effect = {
+		capital_scope = {
+			create_unit = {
+				division = "division_template = \"Shtrafnaya Chast\" start_experience_factor = 0.5 start_equipment_factor = 1.0"
+				owner = ROOT
+				count = 4
+			}
+		}
+		set_country_flag = SOV_penal_units_raised_flag
+	}
+}
+
+SOV_anglo_soviet_invasion_add_ai_strategies_effect = { #Soviet / Anglo-Soviet invasion of Iran
+	if = {
+		limit = {
+			has_global_flag = SOV_agreed_anglo_soviet_invasion_of_iran_flag
+		}
+		SOV = {
+			add_ai_strategy = {
+				type = befriend
+				id = ENG			
+				value = 15
+			}
+		}
+		ENG = {
+			add_ai_strategy = {
+				type = befriend
+				id = SOV			
+				value = 15
+			}
+		}
+	}
+	else = {
+		SOV = {
+			add_ai_strategy = {
+				type = befriend
+				id = ENG			
+				value = -15
+			}
+		}
+		ENG = {
+			add_ai_strategy = {
+				type = befriend
+				id = SOV			
+				value = -15
+			}
+		}
+	}
+	if = {
+		limit = {
+			PER = {
+				is_in_faction = no
+			}
+		}
+		PER = {
+			add_timed_idea = {
+				idea = SOV_shocked_by_surprise_attack
+				days = var:SOV.SOV_operation_countenance_mission_days
+			}
+		}
+	}
+}
+
+SOV_failed_anglo_soviet_invasion_ai_strategies_effect = {
+	if = { #IF ENG is not involved, seek British aid
+		limit = {
+			NOT = { has_global_flag = SOV_agreed_anglo_soviet_invasion_of_iran_flag }
+		}
+		if = {
+			limit = {
+				country_exists = ENG
+				NOT = { has_war_with = ENG }
+				ENG = {
+					is_faction_leader = yes
+					NOT = {	is_in_faction_with = SOV }
+				}
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = ENG		
+				value = 200
+			}
+			ENG = {
+				add_ai_strategy = {
+					type = alliance
+					id = PER		
+					value = 25
+				}
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				country_exists = GER
+				NOT = { has_war_with = GER }
+				GER = {
+					is_faction_leader = yes
+					NOT = {
+						is_in_faction_with = SOV
+						AND = {
+							has_global_flag = SOV_agreed_anglo_soviet_invasion_of_iran_flag
+							is_in_faction_with = ENG
+						}
+					}
+				}
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = GER		
+				value = 200
+			}
+			GER = {
+				add_ai_strategy = {
+					type = alliance
+					id = PER		
+					value = 25
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				country_exists = ITA
+				NOT = { has_war_with = ITA }
+				ITA = {
+					is_faction_leader = yes
+					NOT = {
+						is_in_faction_with = SOV
+						AND = {
+							has_global_flag = SOV_agreed_anglo_soviet_invasion_of_iran_flag
+							is_in_faction_with = ENG
+						}
+					}
+				}
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = ITA		
+				value = 200
+			}
+			ITA = {
+				add_ai_strategy = {
+					type = alliance
+					id = PER		
+					value = 25
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				country_exists = JAP
+				NOT = { has_war_with = JAP }
+				JAP = {
+					is_faction_leader = yes
+					NOT = {
+						is_in_faction_with = SOV
+						AND = {
+							has_global_flag = SOV_agreed_anglo_soviet_invasion_of_iran_flag
+							is_in_faction_with = ENG
+						}
+					}
+				}
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = JAP		
+				value = 200
+			}
+			JAP = {
+				add_ai_strategy = {
+					type = alliance
+					id = PER		
+					value = 25
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				country_exists = FRA
+				NOT = { has_war_with = FRA }
+				FRA = {
+					is_faction_leader = yes
+					NOT = {
+						is_in_faction_with = SOV
+						AND = {
+							has_global_flag = SOV_agreed_anglo_soviet_invasion_of_iran_flag
+							is_in_faction_with = ENG
+						}
+					}
+				}
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = FRA		
+				value = 200
+			}
+			FRA = {
+				add_ai_strategy = {
+					type = alliance
+					id = PER		
+					value = 25
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				country_exists = USA
+				NOT = { has_war_with = USA }
+				USA = {
+					is_faction_leader = yes
+					NOT = {
+						is_in_faction_with = SOV
+						AND = {
+							has_global_flag = SOV_agreed_anglo_soviet_invasion_of_iran_flag
+							is_in_faction_with = ENG
+						}
+					}
+				}
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = USA		
+				value = 200
+			}
+			USA = {
+				add_ai_strategy = {
+					type = alliance
+					id = PER		
+					value = 25
+				}
+			}
+		}
+	}
+}
+
+SOV_manage_spanish_generals_exiled_in_ussr_effect = {
+	#log = "FROM is [FROM.GetName] // ROOT is [ROOT.GetName]" #Debug
+	#Exiled SPD/SPC Generals
+	if = { #Líster
+		limit = {
+			ROOT = { tag = SPD }
+			SOV = {
+				has_country_flag = SOV_spanish_refugee_generals_welcome_flag
+				has_completed_focus = SOV_the_centre
+			}
+		}
+		ROOT = { SPR_enrique_lister = { set_nationality = SOV } }
+		SOV = {
+			SPR_enrique_lister = {
+				set_variable = { SOV.SOV_spanish_general = THIS }
+				#log = "Líster is [?SOV.SOV_spanish_general.GetName]" #Debug
+				#Líster joins the USSR as a Stalinist
+				if = {
+					limit = {
+						has_trait = trait_SPR_anti_stalinist_loyalties
+					}
+					remove_unit_leader_trait = trait_SPR_anti_stalinist_loyalties
+				}
+				if = {
+					limit = {
+						has_trait = trait_SPR_republican_loyalties
+					}
+					remove_unit_leader_trait = trait_SPR_republican_loyalties
+				}
+				if = {
+					limit = {
+						NOT = { has_trait = trait_SPR_stalinist_loyalties }
+					}
+					add_unit_leader_trait = trait_SPR_stalinist_loyalties
+				}
+			}
+			set_country_flag = SOV_go_go_general_flag
+		}
+	}
+	else_if = { #El Campesino
+		limit = {
+			ROOT = { tag = SPD }
+			SOV = {
+				has_country_flag = SOV_spanish_refugee_generals_welcome_flag
+				OR = {
+					has_completed_focus = SOV_the_left_opposition
+					AND = {
+						has_completed_focus = SOV_the_right_opposition
+						NOT = { has_completed_focus = SOV_covert_support_for_spanish_poum }
+					}
+				}
+			}
+		}
+		ROOT = { SPR_valentin_gonzalez = { set_nationality = SOV } }
+		SOV = {
+			SPR_valentin_gonzalez = {
+				set_variable = { SOV.SOV_spanish_general = THIS }
+				#El Campesino joins the USSR as an Anti-Stalinist
+				if = {
+					limit = {
+						has_trait = trait_SPR_republican_loyalties
+					}
+					remove_unit_leader_trait = trait_SPR_republican_loyalties
+				}
+				if = {
+					limit = {
+						has_trait = trait_SPR_stalinist_loyalties
+					}
+					remove_unit_leader_trait = trait_SPR_stalinist_loyalties
+				}
+				if = {
+					limit = {
+						NOT = { has_trait = trait_SPR_anti_stalinist_loyalties }
+					}
+					add_unit_leader_trait = trait_SPR_anti_stalinist_loyalties
+				}
+			}
+			set_country_flag = SOV_go_go_general_flag
+		}
+	}
+	else_if = { #José Rovira
+		limit = {
+			ROOT = { tag = SPC }
+			SOV = {
+				has_country_flag = SOV_spanish_refugee_generals_welcome_flag
+				has_completed_focus = SOV_covert_support_for_spanish_poum
+			}
+		}
+		ROOT = { SPR_jose_rovira = { set_nationality = SOV } }
+		SOV = {
+			SPR_jose_rovira = {
+				set_variable = { SOV.SOV_spanish_general = THIS }
+				#Rovira joins the USSR as an Anti-Stalinist
+				if = {
+					limit = {
+						has_trait = trait_SPR_republican_loyalties
+					}
+					remove_unit_leader_trait = trait_SPR_republican_loyalties
+				}
+				if = {
+					limit = {
+						has_trait = trait_SPR_stalinist_loyalties
+					}
+					remove_unit_leader_trait = trait_SPR_stalinist_loyalties
+				}
+				if = {
+					limit = {
+						NOT = { has_trait = trait_SPR_anti_stalinist_loyalties }
+					}
+					add_unit_leader_trait = trait_SPR_anti_stalinist_loyalties
+				}
+			}
+			set_country_flag = SOV_go_go_general_flag
+		}
+	}
+	if = {
+		limit = {
+			SOV = { has_country_flag = SOV_go_go_general_flag }
+		}
+		var:SOV.SOV_spanish_general = {
+			#log = "I am [THIS.GetName]" #Debug
+			if = { # Won't be a marshal in the USSR
+				limit = {
+					is_field_marshal = yes
+				}
+				demote_leader = yes
+			}
+			if = { # Won't be an advisor in the USSR
+				limit = {
+					is_advisor = yes
+				}
+				if = {
+					limit = {
+						is_character_slot = theorist
+					}
+					remove_advisor_role = { slot = theorist } 
+				}
+				else_if = {
+					limit = {
+						is_character_slot = army_chief
+					}
+					remove_advisor_role = { slot = army_chief } 
+				}
+				if = {
+					limit = {
+						is_character_slot = high_command
+					}
+					remove_advisor_role = { slot = high_command } 
+				}
+			}
+			unit_leader_event = { id = NSB_soviet_spanish_civil_war.1 days = 5 random_days = 2 }
+		}
+		SOV = { clr_country_flag = SOV_spanish_refugee_generals_welcome_flag }
+	}
+}
+
+#POUM brigades come to aid in the Soviet Civil War
+SOV_poum_brigades_to_soviet_civil_war_effect = {
+
+	add_equipment_to_stockpile = {
+		type = infantry_equipment
+		amount = 6000
+		producer = SPC
+	}
+	add_equipment_to_stockpile = {
+		type = support_equipment
+		amount = 600
+		producer = SPC
+	}
+
+	division_template = {
+		name = "International Marxist Brigades"
+		is_locked = yes
+		priority = 1
+		template_counter = 14
+		regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 1 y = 0 }
+			infantry = { x = 1 y = 1 }
+		}
+	}
+
+	division_template = {
+		name = "POUM Special Brigades"
+		is_locked = yes
+		priority = 1
+		template_counter = 02
+		regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 1 y = 0 }
+			infantry = { x = 1 y = 1 }
+			infantry = { x = 1 y = 2 }
+		}
+		support = {
+			engineer = { x = 0 y = 0 }
+			recon = { x = 0 y = 1 }
+			artillery = { x = 0 y = 2 }
+			anti_tank = { x = 0 y = 3 }
+		}
+	}
+
+	division_template = {
+		name = "Brigada de las Juventudes del POUM"
+		template_counter = 0
+		division_names_group = SPD_INF_02
+		is_locked = yes
+		regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+		}
+		support = {
+			engineer = { x = 0 y = 0 }
+		}
+	}
+
+	var:SOV_civil_war_start_state = {
+		create_unit = { #Int Marxist Brigades
+			division = "name = \"International Marxist Brigade\" division_template = \"International Marxist Brigades\" start_experience_factor = 0.7 start_equipment_factor = 1.0" owner = SOV count = 12
+		}
+		create_unit = { #POUM Special Brigades
+			division = "name = \"POUM Special Brigade\" division_template = \"POUM Special Brigades\" start_experience_factor = 1 start_equipment_factor = 1.0" owner = SOV count = 2
+		}
+		create_unit = { #Juventudes Sindicales
+			division = "name = \"Brigada de las Juventudes del POUM\" division_template = \"Brigada de las Juventudes del POUM\" start_experience_factor = 0.6 start_equipment_factor = 1.0" owner = SOV count = 6
+		}
+	}
+
+}
+
+SOV_damage_relocated_military_factories_effect = {
+	if = {
+		limit = {
+			FROM = {
+				NOT = { is_fully_controlled_by = ROOT }
+			}
+		}
+		damage_building = { type = arms_factory damage = 0.9 }
+	}
+	else = {
+		damage_building = { type = arms_factory damage = 0.5 }
+	}
+}
+
+SOV_damage_relocated_civilian_factories_effect = {
+	if = {
+		limit = {
+			FROM = {
+				NOT = { is_fully_controlled_by = ROOT }
+			}
+		}
+		damage_building = { type = industrial_complex damage = 0.9 }
+	}
+	else = {
+		damage_building = { type = industrial_complex damage = 0.5 }
+	}
+}
+
+#RELOCATE INDUSTRY - ROOT = TAG // FROM = TARGETED STATE (to remove industry) // THIS = TARGETED STATE (to remove industry) [Effect assumed to be called inside FROM scope]
+SOV_relocate_industry_in_appropriate_state_effect = {
+	if = {
+		limit = {
+			OR = {
+				has_state_flag = SOV_civs_removed_flag
+				has_state_flag = SOV_mils_removed_flag
+			}
+		}
+		ROOT = {
+			if = { #Prio the Urals
+				limit = {
+					any_controlled_state = {
+						SOV_is_industrial_relocation_destiny_state = yes
+						free_building_slots = {
+							building = arms_factory
+							size > 1
+							include_locked = yes
+						}
+					}
+				}
+				random_controlled_state = {
+					limit = {
+						SOV_is_industrial_relocation_destiny_state = yes
+						free_building_slots = {
+							building = arms_factory
+							size > 1
+							include_locked = yes
+						}
+					}
+					#FIRST FACTORY - Prio Mil
+					if = {
+						limit = {
+							FROM = { has_state_flag = SOV_mils_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = arms_factory
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_mils_removed_flag value = -1 } }
+						SOV_damage_relocated_military_factories_effect = yes
+					}
+					else_if = {
+						limit = {
+							FROM = { has_state_flag = SOV_civs_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = industrial_complex
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_civs_removed_flag value = -1 } }
+						SOV_damage_relocated_civilian_factories_effect = yes
+					}
+					#SECOND FACTORY - Prio Civ
+					if = {
+						limit = {
+							FROM = { has_state_flag = SOV_civs_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = industrial_complex
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_civs_removed_flag value = -1 } }
+						SOV_damage_relocated_civilian_factories_effect = yes
+					}
+					else_if = {
+						limit = {
+							FROM = { has_state_flag = SOV_mils_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = arms_factory
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_mils_removed_flag value = -1 } }
+						SOV_damage_relocated_military_factories_effect = yes
+					}
+				}
+			}
+			else_if = { #A bunch of historical fallbacks
+				limit = {
+					any_controlled_state = {
+						SOV_is_industrial_relocation_destiny_fallback_state = yes
+						free_building_slots = {
+							building = arms_factory
+							size > 1
+							include_locked = yes
+						}
+					}
+				}
+				random_controlled_state = {
+					limit = {
+						SOV_is_industrial_relocation_destiny_fallback_state = yes
+						free_building_slots = {
+							building = arms_factory
+							size > 1
+							include_locked = yes
+						}
+					}
+					#FIRST FACTORY
+					if = {
+						limit = {
+							FROM = { has_state_flag = SOV_mils_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = arms_factory
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_mils_removed_flag value = -1 } }
+						SOV_damage_relocated_military_factories_effect = yes
+					}
+					else_if = {
+						limit = {
+							FROM = { has_state_flag = SOV_civs_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = industrial_complex
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_civs_removed_flag value = -1 } }
+						SOV_damage_relocated_civilian_factories_effect = yes
+					}
+					#SECOND FACTORY
+					if = {
+						limit = {
+							FROM = { has_state_flag = SOV_mils_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = arms_factory
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_mils_removed_flag value = -1 } }
+						SOV_damage_relocated_military_factories_effect = yes
+					}
+					else_if = {
+						limit = {
+							FROM = { has_state_flag = SOV_civs_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = industrial_complex
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_civs_removed_flag value = -1 } }
+						SOV_damage_relocated_civilian_factories_effect = yes
+					}
+				}
+			}
+			else_if = { #what the hell man? Your country is in flames you know?
+				limit = {
+					any_controlled_state = {
+						SOV_is_industrial_relocation_destiny_state = no
+						SOV_is_industrial_relocation_destiny_fallback_state = no
+						is_on_continent = asia
+						free_building_slots = {
+							building = arms_factory
+							size > 1
+							include_locked = yes
+						}
+					}
+				}
+				random_controlled_state = {
+					limit = {
+						SOV_is_industrial_relocation_destiny_state = no
+						SOV_is_industrial_relocation_destiny_fallback_state = no
+						is_on_continent = asia
+						free_building_slots = {
+							building = arms_factory
+							size > 1
+							include_locked = yes
+						}
+					}
+					#FIRST FACTORY
+					if = {
+						limit = {
+							FROM = { has_state_flag = SOV_mils_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = arms_factory
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_mils_removed_flag value = -1 } }
+						SOV_damage_relocated_military_factories_effect = yes
+					}
+					else_if = {
+						limit = {
+							FROM = { has_state_flag = SOV_civs_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = industrial_complex
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_civs_removed_flag value = -1 } }
+						SOV_damage_relocated_civilian_factories_effect = yes
+					}
+					#SECOND FACTORY
+					if = {
+						limit = {
+							FROM = { has_state_flag = SOV_mils_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = arms_factory
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_mils_removed_flag value = -1 } }
+						SOV_damage_relocated_military_factories_effect = yes
+					}
+					else_if = {
+						limit = {
+							FROM = { has_state_flag = SOV_civs_removed_flag }
+						}
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = industrial_complex
+							level = 1
+							instant_build = yes
+						}
+						FROM = { modify_state_flag = { flag = SOV_civs_removed_flag value = -1 } }
+						SOV_damage_relocated_civilian_factories_effect = yes
+					}
+				}
+			}
+		}
+	}
+}
+
+SOV_kill_trotsky_effect = { # Poor bwoy D: -> ROOT = SOV (or it doesn't work! :D)
+	#log = "ROOT is [ROOT.GetName] // THIS is [THIS.GetName] // FROM is [FROM.GetName]" -> Everything is SOV but retire_character tooltip keeps saying "Retire char from [nothing]"
+	set_global_flag = flag_trotsky_dead
+	if = {
+		limit = {
+			has_idea = trotskyite_plot_nsb
+		}
+		swap_ideas = {
+			remove_idea = trotskyite_plot_nsb
+			add_idea = trotskyite_plot_purged
+		}
+	}
+	SOV_lev_trotsky = {
+		set_character_flag = SOV_character_purged_flag
+		retire = yes
+	}
+	set_variable = { SOV.SOV_paranoia_photo_trotsky = 11 }
+	MEX = {
+		if = {
+			limit = {
+				has_country_leader = {
+					character = MEX_leon_trotsky
+				}
+			}
+			retire_ideology_leader = communism 
+		}
+		#retire_character = MEX_leon_trotsky #Mexico did show Trotsky as an unavailable advisor after being killed
+
+		#THIS BELOW IS WHAT IS SCRIPTED TO HAPPEN IF TROTSKY RETURNS TO THE USSR TO RULE THERE
+		#if = {
+		#	limit = {
+		#		has_country_leader = { character = MEX_leon_trotsky }
+		#	}
+		#	add_country_leader_role = {
+		#		character = MEX_hernan_laborde
+		#		country_leader = {
+		#			expire = "1965.1.1"
+		#			ideology = leninism
+		#			traits = {
+		#				devoted_trotskyist
+		#			}
+		#		}
+		#		promote_leader = yes
+		#	}
+		#}
+	}
+}
+
+
+########    ###    ##    ## ##    ##    ########  ########  ######  ####  ######   ##    ## ######## ########
+   ##      ## ##   ###   ## ##   ##     ##     ## ##       ##    ##  ##  ##    ##  ###   ## ##       ##     ##
+   ##     ##   ##  ####  ## ##  ##      ##     ## ##       ##        ##  ##        ####  ## ##       ##     ##
+   ##    ##     ## ## ## ## #####       ##     ## ######    ######   ##  ##   #### ## ## ## ######   ########
+   ##    ######### ##  #### ##  ##      ##     ## ##             ##  ##  ##    ##  ##  #### ##       ##   ##
+   ##    ##     ## ##   ### ##   ##     ##     ## ##       ##    ##  ##  ##    ##  ##   ### ##       ##    ##
+   ##    ##     ## ##    ## ##    ##    ########  ########  ######  ####  ######   ##    ## ######## ##     ##
+
+
+ #######                                #
+    #       ##    #    #  #    #       ##
+    #      #  #   ##   #  #   #       # #
+    #     #    #  # #  #  ####          #
+    #     ######  #  # #  #  #          #
+    #     #    #  #   ##  #   #         #
+    #     #    #  #    #  #    #      #####
+
+#Why do I do this to myself?! D:
+SOV_upgrade_appropriate_tank_designer_1_effect = {
+	#MOROZOV
+	if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau
+		}
+		set_country_flag = SOV_merge_tank_morozov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau
+			add_idea = SOV_morozov_design_bureau_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau_2
+		}
+		set_country_flag = SOV_merge_tank_morozov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau_2
+			add_idea = SOV_morozov_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau_3
+		}
+		set_country_flag = SOV_merge_tank_morozov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau_3
+			add_idea = SOV_morozov_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau_2_3
+		}
+		set_country_flag = SOV_merge_tank_morozov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau_2_3
+			add_idea = SOV_morozov_design_bureau_final
+		}
+	}
+
+	#ASTROV
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau
+		}
+		set_country_flag = SOV_merge_tank_astrov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau
+			add_idea = SOV_astrov_design_bureau_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau_2
+		}
+		set_country_flag = SOV_merge_tank_astrov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau_2
+			add_idea = SOV_astrov_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau_3
+		}
+		set_country_flag = SOV_merge_tank_astrov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau_3
+			add_idea = SOV_astrov_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau_2_3
+		}
+		set_country_flag = SOV_merge_tank_astrov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau_2_3
+			add_idea = SOV_astrov_design_bureau_final
+		}
+	}
+
+	#OKMO
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo
+		}
+		set_country_flag = SOV_merge_tank_okmo_1_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo
+			add_idea = SOV_okmo_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo_2
+		}
+		set_country_flag = SOV_merge_tank_okmo_1_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo_2
+			add_idea = SOV_okmo_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo_3
+		}
+		set_country_flag = SOV_merge_tank_okmo_1_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo_3
+			add_idea = SOV_okmo_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo_2_3
+		}
+		set_country_flag = SOV_merge_tank_okmo_1_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo_2_3
+			add_idea = SOV_okmo_final
+		}
+	}
+
+	#mytishchy
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_1_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant
+			add_idea = SOV_mytishchy_machine_building_plant_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant_2
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_1_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant_2
+			add_idea = SOV_mytishchy_machine_building_plant_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant_3
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_1_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant_3
+			add_idea = SOV_mytishchy_machine_building_plant_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant_2_3
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_1_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant_2_3
+			add_idea = SOV_mytishchy_machine_building_plant_final
+		}
+	}
+
+	#KIROV
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov
+		}
+		set_country_flag = SOV_merge_tank_kirov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov
+			add_idea = SOV_kirov_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov_2
+		}
+		set_country_flag = SOV_merge_tank_kirov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov_2
+			add_idea = SOV_kirov_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov_3
+		}
+		set_country_flag = SOV_merge_tank_kirov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov_3
+			add_idea = SOV_kirov_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov_2_3
+		}
+		set_country_flag = SOV_merge_tank_kirov_1_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov_2_3
+			add_idea = SOV_kirov_final
+		}
+	}
+}
+
+ #######                               #####
+    #       ##    #    #  #    #      #     #
+    #      #  #   ##   #  #   #             #
+    #     #    #  # #  #  ####         #####
+    #     ######  #  # #  #  #        #
+    #     #    #  #   ##  #   #       #
+    #     #    #  #    #  #    #      #######
+
+
+SOV_upgrade_appropriate_tank_designer_2_effect = {
+	#MOROZOV
+	if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau
+		}
+		set_country_flag = SOV_merge_tank_morozov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau
+			add_idea = SOV_morozov_design_bureau_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau_1
+		}
+		set_country_flag = SOV_merge_tank_morozov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau_1
+			add_idea = SOV_morozov_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau_3
+		}
+		set_country_flag = SOV_merge_tank_morozov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau_3
+			add_idea = SOV_morozov_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau_1_3
+		}
+		set_country_flag = SOV_merge_tank_morozov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau_1_3
+			add_idea = SOV_morozov_design_bureau_final
+		}
+	}
+
+	#ASTROV
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau
+		}
+		set_country_flag = SOV_merge_tank_astrov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau
+			add_idea = SOV_astrov_design_bureau_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau_1
+		}
+		set_country_flag = SOV_merge_tank_astrov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau_1
+			add_idea = SOV_astrov_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau_3
+		}
+		set_country_flag = SOV_merge_tank_astrov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau_3
+			add_idea = SOV_astrov_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau_1_3
+		}
+		set_country_flag = SOV_merge_tank_astrov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau_1_3
+			add_idea = SOV_astrov_design_bureau_final
+		}
+	}
+
+	#OKMO
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo
+		}
+		set_country_flag = SOV_merge_tank_okmo_2_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo
+			add_idea = SOV_okmo_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo_1
+		}
+		set_country_flag = SOV_merge_tank_okmo_2_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo_1
+			add_idea = SOV_okmo_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo_3
+		}
+		set_country_flag = SOV_merge_tank_okmo_2_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo_3
+			add_idea = SOV_okmo_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo_1_3
+		}
+		set_country_flag = SOV_merge_tank_okmo_2_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo_1_3
+			add_idea = SOV_okmo_final
+		}
+	}
+
+	#mytishchy
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_2_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant
+			add_idea = SOV_mytishchy_machine_building_plant_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant_1
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_2_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant_1
+			add_idea = SOV_mytishchy_machine_building_plant_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant_3
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_2_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant_3
+			add_idea = SOV_mytishchy_machine_building_plant_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant_1_3
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_2_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant_1_3
+			add_idea = SOV_mytishchy_machine_building_plant_final
+		}
+	}
+
+	#KIROV
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov
+		}
+		set_country_flag = SOV_merge_tank_kirov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov
+			add_idea = SOV_kirov_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov_1
+		}
+		set_country_flag = SOV_merge_tank_kirov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov_1
+			add_idea = SOV_kirov_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov_3
+		}
+		set_country_flag = SOV_merge_tank_kirov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov_3
+			add_idea = SOV_kirov_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov_1_3
+		}
+		set_country_flag = SOV_merge_tank_kirov_2_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov_1_3
+			add_idea = SOV_kirov_final
+		}
+	}
+}
+
+ #######                               #####
+    #       ##    #    #  #    #      #     #
+    #      #  #   ##   #  #   #             #
+    #     #    #  # #  #  ####         #####
+    #     ######  #  # #  #  #              #
+    #     #    #  #   ##  #   #       #     #
+    #     #    #  #    #  #    #       #####
+
+
+SOV_upgrade_appropriate_tank_designer_3_effect = {
+	#MOROZOV
+	if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau
+		}
+		set_country_flag = SOV_merge_tank_morozov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau
+			add_idea = SOV_morozov_design_bureau_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau_1
+		}
+		set_country_flag = SOV_merge_tank_morozov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau_1
+			add_idea = SOV_morozov_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau_2
+		}
+		set_country_flag = SOV_merge_tank_morozov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau_2
+			add_idea = SOV_morozov_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_morozov_design_bureau_1_2
+		}
+		set_country_flag = SOV_merge_tank_morozov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_morozov_design_bureau_1_2
+			add_idea = SOV_morozov_design_bureau_final
+		}
+	}
+
+	#ASTROV
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau
+		}
+		set_country_flag = SOV_merge_tank_astrov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau
+			add_idea = SOV_astrov_design_bureau_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau_1
+		}
+		set_country_flag = SOV_merge_tank_astrov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau_1
+			add_idea = SOV_astrov_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau_2
+		}
+		set_country_flag = SOV_merge_tank_astrov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau_2
+			add_idea = SOV_astrov_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_astrov_design_bureau_1_2
+		}
+		set_country_flag = SOV_merge_tank_astrov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_astrov_design_bureau_1_2
+			add_idea = SOV_astrov_design_bureau_final
+		}
+	}
+
+	#OKMO
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo
+		}
+		set_country_flag = SOV_merge_tank_okmo_3_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo
+			add_idea = SOV_okmo_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo_1
+		}
+		set_country_flag = SOV_merge_tank_okmo_3_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo_1
+			add_idea = SOV_okmo_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo_2
+		}
+		set_country_flag = SOV_merge_tank_okmo_3_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo_2
+			add_idea = SOV_okmo_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_okmo_1_2
+		}
+		set_country_flag = SOV_merge_tank_okmo_3_flag
+		swap_ideas = {
+			remove_idea = SOV_okmo_1_2
+			add_idea = SOV_okmo_final
+		}
+	}
+
+	#mytishchy
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_3_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant
+			add_idea = SOV_mytishchy_machine_building_plant_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant_1
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_3_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant_1
+			add_idea = SOV_mytishchy_machine_building_plant_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant_2
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_3_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant_2
+			add_idea = SOV_mytishchy_machine_building_plant_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mytishchy_machine_building_plant_1_2
+		}
+		set_country_flag = SOV_merge_tank_mytishchy_3_flag
+		swap_ideas = {
+			remove_idea = SOV_mytishchy_machine_building_plant_1_2
+			add_idea = SOV_mytishchy_machine_building_plant_final
+		}
+	}
+
+	#KIROV
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov
+		}
+		set_country_flag = SOV_merge_tank_kirov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov
+			add_idea = SOV_kirov_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov_1
+		}
+		set_country_flag = SOV_merge_tank_kirov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov_1
+			add_idea = SOV_kirov_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov_2
+		}
+		set_country_flag = SOV_merge_tank_kirov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov_2
+			add_idea = SOV_kirov_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_kirov_1_2
+		}
+		set_country_flag = SOV_merge_tank_kirov_3_flag
+		swap_ideas = {
+			remove_idea = SOV_kirov_1_2
+			add_idea = SOV_kirov_final
+		}
+	}
+}
+
+
+##    ##    ###    ##     ##    ###    ##          ########  ########  ######  ####  ######   ##    ## ######## ########
+###   ##   ## ##   ##     ##   ## ##   ##          ##     ## ##       ##    ##  ##  ##    ##  ###   ## ##       ##     ##
+####  ##  ##   ##  ##     ##  ##   ##  ##          ##     ## ##       ##        ##  ##        ####  ## ##       ##     ##
+## ## ## ##     ## ##     ## ##     ## ##          ##     ## ######    ######   ##  ##   #### ## ## ## ######   ########
+##  #### #########  ##   ##  ######### ##          ##     ## ##             ##  ##  ##    ##  ##  #### ##       ##   ##
+##   ### ##     ##   ## ##   ##     ## ##          ##     ## ##       ##    ##  ##  ##    ##  ##   ### ##       ##    ##
+##    ## ##     ##    ###    ##     ## ########    ########  ########  ######  ####  ######   ##    ## ######## ##     ##
+
+ #     #                                        #        ######
+ ##    #    ##    #    #    ##    #            ##        #     #    ##    #       #####  #   ####
+ # #   #   #  #   #    #   #  #   #           # #        #     #   #  #   #         #    #  #    #
+ #  #  #  #    #  #    #  #    #  #             #        ######   #    #  #         #    #  #
+ #   # #  ######  #    #  ######  #             #        #     #  ######  #         #    #  #
+ #    ##  #    #   #  #   #    #  #             #        #     #  #    #  #         #    #  #    #
+ #     #  #    #    ##    #    #  ######      #####      ######   #    #  ######    #    #   ####
+
+
+SOV_upgrade_appropriate_ship_designer_1_baltic_effect = {
+	#NEVSKOYE DESIGN BUREAU
+	if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau
+			add_idea = SOV_nevskoye_design_bureau_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_2
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_2
+			add_idea = SOV_nevskoye_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_3
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_3
+			add_idea = SOV_nevskoye_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_4
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_4
+			add_idea = SOV_nevskoye_design_bureau_1_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_2_4
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_2_4
+			add_idea = SOV_nevskoye_design_bureau_final_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_3_4
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_3_4
+			add_idea = SOV_nevskoye_design_bureau_final_3
+		}
+	}
+
+	#RUBIN DESIGN BUREAU
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau
+			add_idea = SOV_rubin_design_bureau_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_2
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_2
+			add_idea = SOV_rubin_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_3
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_3
+			add_idea = SOV_rubin_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_4
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_4
+			add_idea = SOV_rubin_design_bureau_1_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_2_4
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_2_4
+			add_idea = SOV_rubin_design_bureau_final_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_3_4
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_1_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_3_4
+			add_idea = SOV_rubin_design_bureau_final_3
+		}
+	}
+}
+
+ #     #                                       #####       ######
+ ##    #    ##    #    #    ##    #           #     #      #     #    ##    #       #####  #   ####
+ # #   #   #  #   #    #   #  #   #                 #      #     #   #  #   #         #    #  #    #
+ #  #  #  #    #  #    #  #    #  #            #####       ######   #    #  #         #    #  #
+ #   # #  ######  #    #  ######  #           #            #     #  ######  #         #    #  #
+ #    ##  #    #   #  #   #    #  #           #            #     #  #    #  #         #    #  #    #
+ #     #  #    #    ##    #    #  ######      #######      ######   #    #  ######    #    #   ####
+
+
+SOV_upgrade_appropriate_ship_designer_2_baltic_effect = {
+	#NEVSKOYE DESIGN BUREAU
+	if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_2_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau
+			add_idea = SOV_nevskoye_design_bureau_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_1
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_2_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_1
+			add_idea = SOV_nevskoye_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_4
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_2_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_4
+			add_idea = SOV_nevskoye_design_bureau_2_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_1_4
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_2_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_1_4
+			add_idea = SOV_nevskoye_design_bureau_final_2
+		}
+	}
+
+	#RUBIN DESIGN BUREAU
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_2_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau
+			add_idea = SOV_rubin_design_bureau_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_1
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_2_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_1
+			add_idea = SOV_rubin_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_4
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_2_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_4
+			add_idea = SOV_rubin_design_bureau_2_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_1_4
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_2_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_1_4
+			add_idea = SOV_rubin_design_bureau_final_2
+		}
+	}
+}
+
+ #     #                                       #####       ######
+ ##    #    ##    #    #    ##    #           #     #      #     #    ##    #       #####  #   ####
+ # #   #   #  #   #    #   #  #   #                 #      #     #   #  #   #         #    #  #    #
+ #  #  #  #    #  #    #  #    #  #            #####       ######   #    #  #         #    #  #
+ #   # #  ######  #    #  ######  #                 #      #     #  ######  #         #    #  #
+ #    ##  #    #   #  #   #    #  #           #     #      #     #  #    #  #         #    #  #    #
+ #     #  #    #    ##    #    #  ######       #####       ######   #    #  ######    #    #   ####
+
+SOV_upgrade_appropriate_ship_designer_3_baltic_effect = {
+	#NEVSKOYE DESIGN BUREAU
+	if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_3_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau
+			add_idea = SOV_nevskoye_design_bureau_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_1
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_3_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_1
+			add_idea = SOV_nevskoye_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_4
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_3_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_4
+			add_idea = SOV_nevskoye_design_bureau_3_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_1_4
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_3_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_1_4
+			add_idea = SOV_nevskoye_design_bureau_final_3
+		}
+	}
+
+	#RUBIN DESIGN BUREAU
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_3_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau
+			add_idea = SOV_rubin_design_bureau_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_1
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_3_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_1
+			add_idea = SOV_rubin_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_4
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_3_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_4
+			add_idea = SOV_rubin_design_bureau_3_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_1_4
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_3_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_1_4
+			add_idea = SOV_rubin_design_bureau_final_3
+		}
+	}
+}
+
+ #     #                                      #            ######
+ ##    #    ##    #    #    ##    #           #    #       #     #    ##    #       #####  #   ####
+ # #   #   #  #   #    #   #  #   #           #    #       #     #   #  #   #         #    #  #    #
+ #  #  #  #    #  #    #  #    #  #           #    #       ######   #    #  #         #    #  #
+ #   # #  ######  #    #  ######  #           #######      #     #  ######  #         #    #  #
+ #    ##  #    #   #  #   #    #  #                #       #     #  #    #  #         #    #  #    #
+ #     #  #    #    ##    #    #  ######           #       ######   #    #  ######    #    #   ####
+
+
+SOV_upgrade_appropriate_ship_designer_4_baltic_effect = {
+	#NEVSKOYE DESIGN BUREAU
+	if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau
+			add_idea = SOV_nevskoye_design_bureau_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_1
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_1
+			add_idea = SOV_nevskoye_design_bureau_1_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_2
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_2
+			add_idea = SOV_nevskoye_design_bureau_2_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_3
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_3
+			add_idea = SOV_nevskoye_design_bureau_3_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_1_2
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_1_2
+			add_idea = SOV_nevskoye_design_bureau_final_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_nevskoye_design_bureau_1_3
+		}
+		set_country_flag = SOV_merge_ship_nevskoye_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_nevskoye_design_bureau_1_3
+			add_idea = SOV_nevskoye_design_bureau_final_3
+		}
+	}
+
+	#RUBIN DESIGN BUREAU
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau
+			add_idea = SOV_rubin_design_bureau_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_1
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_1
+			add_idea = SOV_rubin_design_bureau_1_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_2
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_2
+			add_idea = SOV_rubin_design_bureau_2_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_3
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_3
+			add_idea = SOV_rubin_design_bureau_3_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_1_2
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_1_2
+			add_idea = SOV_rubin_design_bureau_final_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_rubin_design_bureau_1_3
+		}
+		set_country_flag = SOV_merge_ship_rubin_design_bureau_4_flag
+		swap_ideas = {
+			remove_idea = SOV_rubin_design_bureau_1_3
+			add_idea = SOV_rubin_design_bureau_final_3
+		}
+	}
+}
+
+ #     #                                        #        ######                                        #####
+ ##    #    ##    #    #    ##    #            ##        #     #  #         ##     ####   #    #      #     #  ######    ##
+ # #   #   #  #   #    #   #  #   #           # #        #     #  #        #  #   #    #  #   #       #        #        #  #
+ #  #  #  #    #  #    #  #    #  #             #        ######   #       #    #  #       ####         #####   #####   #    #
+ #   # #  ######  #    #  ######  #             #        #     #  #       ######  #       #  #              #  #       ######
+ #    ##  #    #   #  #   #    #  #             #        #     #  #       #    #  #    #  #   #       #     #  #       #    #
+ #     #  #    #    ##    #    #  ######      #####      ######   ######  #    #   ####   #    #       #####   ######  #    #
+
+
+SOV_upgrade_appropriate_ship_designer_1_black_sea_effect = {
+	#BLACK SEA SHIPYARD
+	if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_1_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard
+			add_idea = SOV_black_sea_shipyard_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_2
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_1_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_2
+			add_idea = SOV_black_sea_shipyard_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_3
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_1_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_3
+			add_idea = SOV_black_sea_shipyard_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_4
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_1_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_4
+			add_idea = SOV_black_sea_shipyard_1_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_2_4
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_1_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_2_4
+			add_idea = SOV_black_sea_shipyard_final_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_3_4
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_1_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_3_4
+			add_idea = SOV_black_sea_shipyard_final_3
+		}
+	}
+
+	#SEVASTOPOL MARINE PLANT
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_1_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant
+			add_idea = SOV_sevastopol_marine_plant_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_2
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_1_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_2
+			add_idea = SOV_sevastopol_marine_plant_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_3
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_1_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_3
+			add_idea = SOV_sevastopol_marine_plant_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_4
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_1_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_4
+			add_idea = SOV_sevastopol_marine_plant_1_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_2_4
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_1_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_2_4
+			add_idea = SOV_sevastopol_marine_plant_final_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_3_4
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_1_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_3_4
+			add_idea = SOV_sevastopol_marine_plant_final_3
+		}
+	}
+}
+
+ #     #                                       #####       ######                                        #####
+ ##    #    ##    #    #    ##    #           #     #      #     #  #         ##     ####   #    #      #     #  ######    ##
+ # #   #   #  #   #    #   #  #   #                 #      #     #  #        #  #   #    #  #   #       #        #        #  #
+ #  #  #  #    #  #    #  #    #  #            #####       ######   #       #    #  #       ####         #####   #####   #    #
+ #   # #  ######  #    #  ######  #           #            #     #  #       ######  #       #  #              #  #       ######
+ #    ##  #    #   #  #   #    #  #           #            #     #  #       #    #  #    #  #   #       #     #  #       #    #
+ #     #  #    #    ##    #    #  ######      #######      ######   ######  #    #   ####   #    #       #####   ######  #    #
+
+
+SOV_upgrade_appropriate_ship_designer_2_black_sea_effect = {
+	#BLACK SEA SHIPYARD
+	if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_2_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard
+			add_idea = SOV_black_sea_shipyard_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_1
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_2_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_1
+			add_idea = SOV_black_sea_shipyard_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_4
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_2_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_4
+			add_idea = SOV_black_sea_shipyard_2_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_1_4
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_2_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_1_4
+			add_idea = SOV_black_sea_shipyard_final_2
+		}
+	}
+
+	#SEVASTOPOL MARINE PLANT
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_2_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant
+			add_idea = SOV_sevastopol_marine_plant_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_1
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_2_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_1
+			add_idea = SOV_sevastopol_marine_plant_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_4
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_2_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_4
+			add_idea = SOV_sevastopol_marine_plant_2_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_1_4
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_2_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_1_4
+			add_idea = SOV_sevastopol_marine_plant_final_2
+		}
+	}
+}
+
+ #     #                                       #####       ######                                        #####
+ ##    #    ##    #    #    ##    #           #     #      #     #  #         ##     ####   #    #      #     #  ######    ##
+ # #   #   #  #   #    #   #  #   #                 #      #     #  #        #  #   #    #  #   #       #        #        #  #
+ #  #  #  #    #  #    #  #    #  #            #####       ######   #       #    #  #       ####         #####   #####   #    #
+ #   # #  ######  #    #  ######  #                 #      #     #  #       ######  #       #  #              #  #       ######
+ #    ##  #    #   #  #   #    #  #           #     #      #     #  #       #    #  #    #  #   #       #     #  #       #    #
+ #     #  #    #    ##    #    #  ######       #####       ######   ######  #    #   ####   #    #       #####   ######  #    #
+
+
+SOV_upgrade_appropriate_ship_designer_3_black_sea_effect = {
+	#BLACK SEA SHIPYARD
+	if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_3_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard
+			add_idea = SOV_black_sea_shipyard_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_1
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_3_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_1
+			add_idea = SOV_black_sea_shipyard_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_4
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_3_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_4
+			add_idea = SOV_black_sea_shipyard_3_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_1_4
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_3_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_1_4
+			add_idea = SOV_black_sea_shipyard_final_3
+		}
+	}
+
+	#SEVASTOPOL MARINE PLANT
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_3_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant
+			add_idea = SOV_sevastopol_marine_plant_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_1
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_3_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_1
+			add_idea = SOV_sevastopol_marine_plant_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_4
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_3_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_4
+			add_idea = SOV_sevastopol_marine_plant_3_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_1_4
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_3_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_1_4
+			add_idea = SOV_sevastopol_marine_plant_final_3
+		}
+	}
+}
+
+ #     #                                      #            ######                                        #####
+ ##    #    ##    #    #    ##    #           #    #       #     #  #         ##     ####   #    #      #     #  ######    ##
+ # #   #   #  #   #    #   #  #   #           #    #       #     #  #        #  #   #    #  #   #       #        #        #  #
+ #  #  #  #    #  #    #  #    #  #           #    #       ######   #       #    #  #       ####         #####   #####   #    #
+ #   # #  ######  #    #  ######  #           #######      #     #  #       ######  #       #  #              #  #       ######
+ #    ##  #    #   #  #   #    #  #                #       #     #  #       #    #  #    #  #   #       #     #  #       #    #
+ #     #  #    #    ##    #    #  ######           #       ######   ######  #    #   ####   #    #       #####   ######  #    #
+
+
+SOV_upgrade_appropriate_ship_designer_4_black_sea_effect = {
+	#BLACK SEA SHIPYARD
+	if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_4_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard
+			add_idea = SOV_black_sea_shipyard_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_1
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_4_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_1
+			add_idea = SOV_black_sea_shipyard_1_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_2
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_4_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_2
+			add_idea = SOV_black_sea_shipyard_2_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_3
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_4_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_3
+			add_idea = SOV_black_sea_shipyard_3_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_1_2
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_4_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_1_2
+			add_idea = SOV_black_sea_shipyard_final_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_black_sea_shipyard_1_3
+		}
+		set_country_flag = SOV_merge_ship_black_sea_shipyard_4_flag
+		swap_ideas = {
+			remove_idea = SOV_black_sea_shipyard_1_3
+			add_idea = SOV_black_sea_shipyard_final_3
+		}
+	}
+
+	#SEVASTOPOL MARINE PLANT
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_4_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant
+			add_idea = SOV_sevastopol_marine_plant_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_1
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_4_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_1
+			add_idea = SOV_sevastopol_marine_plant_1_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_2
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_4_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_2
+			add_idea = SOV_sevastopol_marine_plant_2_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_3
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_4_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_3
+			add_idea = SOV_sevastopol_marine_plant_3_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_1_2
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_4_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_1_2
+			add_idea = SOV_sevastopol_marine_plant_final_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_sevastopol_marine_plant_1_3
+		}
+		set_country_flag = SOV_merge_ship_sevastopol_marine_plant_4_flag
+		swap_ideas = {
+			remove_idea = SOV_sevastopol_marine_plant_1_3
+			add_idea = SOV_sevastopol_marine_plant_final_3
+		}
+	}
+}
+
+
+   ###    #### ########   ######  ########     ###    ######## ########    ########  ########  ######  ####  ######   ##    ## ######## ########
+  ## ##    ##  ##     ## ##    ## ##     ##   ## ##   ##          ##       ##     ## ##       ##    ##  ##  ##    ##  ###   ## ##       ##     ##
+ ##   ##   ##  ##     ## ##       ##     ##  ##   ##  ##          ##       ##     ## ##       ##        ##  ##        ####  ## ##       ##     ##
+##     ##  ##  ########  ##       ########  ##     ## ######      ##       ##     ## ######    ######   ##  ##   #### ## ## ## ######   ########
+#########  ##  ##   ##   ##       ##   ##   ######### ##          ##       ##     ## ##             ##  ##  ##    ##  ##  #### ##       ##   ##
+##     ##  ##  ##    ##  ##    ## ##    ##  ##     ## ##          ##       ##     ## ##       ##    ##  ##  ##    ##  ##   ### ##       ##    ##
+##     ## #### ##     ##  ######  ##     ## ##     ## ##          ##       ########  ########  ######  ####  ######   ##    ## ######## ##     ##
+
+    #                                                             #
+   # #    #  #####    ####   #####     ##    ######  #####       ##
+  #   #   #  #    #  #    #  #    #   #  #   #         #        # #
+ #     #  #  #    #  #       #    #  #    #  #####     #          #
+ #######  #  #####   #       #####   ######  #         #          #
+ #     #  #  #   #   #    #  #   #   #    #  #         #          #
+ #     #  #  #    #   ####   #    #  #    #  #         #        #####
+
+
+SOV_upgrade_appropriate_aircraft_designer_1_effect = {
+	#MIG
+	if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_mig_1_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau
+			add_idea = SOV_mig_design_bureau_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau_2
+		}
+		set_country_flag = SOV_merge_aircraft_mig_1_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau_2
+			add_idea = SOV_mig_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau_3
+		}
+		set_country_flag = SOV_merge_aircraft_mig_1_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau_3
+			add_idea = SOV_mig_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau_2_3
+		}
+		set_country_flag = SOV_merge_aircraft_mig_1_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau_2_3
+			add_idea = SOV_mig_design_bureau_final
+		}
+	}
+
+	#ILYUSHIN
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_1_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau
+			add_idea = SOV_ilyushin_design_bureau_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau_2
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_1_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau_2
+			add_idea = SOV_ilyushin_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau_3
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_1_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau_3
+			add_idea = SOV_ilyushin_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau_2_3
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_1_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau_2_3
+			add_idea = SOV_ilyushin_design_bureau_final
+		}
+	}
+
+	#TUPOLEV
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_1_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau
+			add_idea = SOV_tupolev_design_bureau_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau_2
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_1_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau_2
+			add_idea = SOV_tupolev_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau_3
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_1_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau_3
+			add_idea = SOV_tupolev_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau_2_3
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_1_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau_2_3
+			add_idea = SOV_tupolev_design_bureau_final
+		}
+	}
+
+	#YAKOVLEV
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_1_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau
+			add_idea = SOV_yakovlev_design_bureau_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau_2
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_1_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau_2
+			add_idea = SOV_yakovlev_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau_3
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_1_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau_3
+			add_idea = SOV_yakovlev_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau_2_3
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_1_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau_2_3
+			add_idea = SOV_yakovlev_design_bureau_final
+		}
+	}
+}
+
+    #                                                            #####
+   # #    #  #####    ####   #####     ##    ######  #####      #     #
+  #   #   #  #    #  #    #  #    #   #  #   #         #              #
+ #     #  #  #    #  #       #    #  #    #  #####     #         #####
+ #######  #  #####   #       #####   ######  #         #        #
+ #     #  #  #   #   #    #  #   #   #    #  #         #        #
+ #     #  #  #    #   ####   #    #  #    #  #         #        #######
+
+
+SOV_upgrade_appropriate_aircraft_designer_2_effect = {
+	#MIG
+	if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_mig_2_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau
+			add_idea = SOV_mig_design_bureau_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau_1
+		}
+		set_country_flag = SOV_merge_aircraft_mig_2_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau_1
+			add_idea = SOV_mig_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau_3
+		}
+		set_country_flag = SOV_merge_aircraft_mig_2_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau_3
+			add_idea = SOV_mig_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau_1_3
+		}
+		set_country_flag = SOV_merge_aircraft_mig_2_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau_1_3
+			add_idea = SOV_mig_design_bureau_final
+		}
+	}
+
+	#ILYUSHIN
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_2_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau
+			add_idea = SOV_ilyushin_design_bureau_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau_1
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_2_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau_1
+			add_idea = SOV_ilyushin_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau_3
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_2_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau_3
+			add_idea = SOV_ilyushin_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau_1_3
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_2_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau_1_3
+			add_idea = SOV_ilyushin_design_bureau_final
+		}
+	}
+
+	#TUPOLEV
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_2_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau
+			add_idea = SOV_tupolev_design_bureau_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau_1
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_2_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau_1
+			add_idea = SOV_tupolev_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau_3
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_2_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau_3
+			add_idea = SOV_tupolev_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau_1_3
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_2_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau_1_3
+			add_idea = SOV_tupolev_design_bureau_final
+		}
+	}
+
+	#YAKOVLEV
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_2_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau
+			add_idea = SOV_yakovlev_design_bureau_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau_1
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_2_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau_1
+			add_idea = SOV_yakovlev_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau_3
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_2_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau_3
+			add_idea = SOV_yakovlev_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau_1_3
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_2_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau_1_3
+			add_idea = SOV_yakovlev_design_bureau_final
+		}
+	}
+}
+
+    #                                                            #####
+   # #    #  #####    ####   #####     ##    ######  #####      #     #
+  #   #   #  #    #  #    #  #    #   #  #   #         #              #
+ #     #  #  #    #  #       #    #  #    #  #####     #         #####
+ #######  #  #####   #       #####   ######  #         #              #
+ #     #  #  #   #   #    #  #   #   #    #  #         #        #     #
+ #     #  #  #    #   ####   #    #  #    #  #         #         #####
+
+
+SOV_upgrade_appropriate_aircraft_designer_3_effect = {
+	#MIG
+	if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_mig_3_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau
+			add_idea = SOV_mig_design_bureau_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau_1
+		}
+		set_country_flag = SOV_merge_aircraft_mig_3_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau_1
+			add_idea = SOV_mig_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau_2
+		}
+		set_country_flag = SOV_merge_aircraft_mig_3_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau_2
+			add_idea = SOV_mig_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_mig_design_bureau_1_2
+		}
+		set_country_flag = SOV_merge_aircraft_mig_3_flag
+		swap_ideas = {
+			remove_idea = SOV_mig_design_bureau_1_2
+			add_idea = SOV_mig_design_bureau_final
+		}
+	}
+
+	#ILYUSHIN
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_3_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau
+			add_idea = SOV_ilyushin_design_bureau_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau_1
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_3_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau_1
+			add_idea = SOV_ilyushin_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau_2
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_3_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau_2
+			add_idea = SOV_ilyushin_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_ilyushin_design_bureau_1_2
+		}
+		set_country_flag = SOV_merge_aircraft_ilyushin_3_flag
+		swap_ideas = {
+			remove_idea = SOV_ilyushin_design_bureau_1_2
+			add_idea = SOV_ilyushin_design_bureau_final
+		}
+	}
+
+	#TUPOLEV
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_3_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau
+			add_idea = SOV_tupolev_design_bureau_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau_1
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_3_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau_1
+			add_idea = SOV_tupolev_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau_2
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_3_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau_2
+			add_idea = SOV_tupolev_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tupolev_design_bureau_1_2
+		}
+		set_country_flag = SOV_merge_aircraft_tupolev_3_flag
+		swap_ideas = {
+			remove_idea = SOV_tupolev_design_bureau_1_2
+			add_idea = SOV_tupolev_design_bureau_final
+		}
+	}
+
+	#YAKOVLEV
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_3_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau
+			add_idea = SOV_yakovlev_design_bureau_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau_1
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_3_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau_1
+			add_idea = SOV_yakovlev_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau_2
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_3_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau_2
+			add_idea = SOV_yakovlev_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_yakovlev_design_bureau_1_2
+		}
+		set_country_flag = SOV_merge_aircraft_yakovlev_3_flag
+		swap_ideas = {
+			remove_idea = SOV_yakovlev_design_bureau_1_2
+			add_idea = SOV_yakovlev_design_bureau_final
+		}
+	}
+}
+
+
+##     ##    ###    ######## ######## ########  #### ######## ##          ########  ########  ######  ####  ######   ##    ## ######## ########
+###   ###   ## ##      ##    ##       ##     ##  ##  ##       ##          ##     ## ##       ##    ##  ##  ##    ##  ###   ## ##       ##     ##
+#### ####  ##   ##     ##    ##       ##     ##  ##  ##       ##          ##     ## ##       ##        ##  ##        ####  ## ##       ##     ##
+## ### ## ##     ##    ##    ######   ########   ##  ######   ##          ##     ## ######    ######   ##  ##   #### ## ## ## ######   ########
+##     ## #########    ##    ##       ##   ##    ##  ##       ##          ##     ## ##             ##  ##  ##    ##  ##  #### ##       ##   ##
+##     ## ##     ##    ##    ##       ##    ##   ##  ##       ##          ##     ## ##       ##    ##  ##  ##    ##  ##   ### ##       ##    ##
+##     ## ##     ##    ##    ######## ##     ## #### ######## ########    ########  ########  ######  ####  ######   ##    ## ######## ##     ##
+
+ #     #                                                          #
+ ##   ##    ##    #####  ######  #####   #  ######  #            ##
+ # # # #   #  #     #    #       #    #  #  #       #           # #
+ #  #  #  #    #    #    #####   #    #  #  #####   #             #
+ #     #  ######    #    #       #####   #  #       #             #
+ #     #  #    #    #    #       #   #   #  #       #             #
+ #     #  #    #    #    ######  #    #  #  ######  ######      #####
+
+SOV_upgrade_appropriate_materiel_designer_1_artillery_effect = {
+	#GRABIN
+	if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau
+		}
+		set_country_flag = SOV_merge_materiel_grabin_1_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau
+			add_idea = SOV_grabin_design_bureau_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau_2
+		}
+		set_country_flag = SOV_merge_materiel_grabin_1_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau_2
+			add_idea = SOV_grabin_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau_3
+		}
+		set_country_flag = SOV_merge_materiel_grabin_1_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau_3
+			add_idea = SOV_grabin_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau_2_3
+		}
+		set_country_flag = SOV_merge_materiel_grabin_1_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau_2_3
+			add_idea = SOV_grabin_design_bureau_final
+		}
+	}
+}
+
+SOV_upgrade_appropriate_materiel_designer_1_infantry_effect = {
+	#TULA
+	if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant
+		}
+		set_country_flag = SOV_merge_materiel_tula_1_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant
+			add_idea = SOV_tula_arms_plant_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant_2
+		}
+		set_country_flag = SOV_merge_materiel_tula_1_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant_2
+			add_idea = SOV_tula_arms_plant_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant_3
+		}
+		set_country_flag = SOV_merge_materiel_tula_1_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant_3
+			add_idea = SOV_tula_arms_plant_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant_2_3
+		}
+		set_country_flag = SOV_merge_materiel_tula_1_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant_2_3
+			add_idea = SOV_tula_arms_plant_final
+		}
+	}
+}
+
+SOV_upgrade_appropriate_materiel_designer_1_motorized_effect = {
+	#GAZ
+	if = {
+		limit = {
+			has_idea = SOV_gaz
+		}
+		set_country_flag = SOV_merge_materiel_gaz_1_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz
+			add_idea = SOV_gaz_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz_2
+		}
+		set_country_flag = SOV_merge_materiel_gaz_1_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz_2
+			add_idea = SOV_gaz_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz_3
+		}
+		set_country_flag = SOV_merge_materiel_gaz_1_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz_3
+			add_idea = SOV_gaz_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz_2_3
+		}
+		set_country_flag = SOV_merge_materiel_gaz_1_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz_2_3
+			add_idea = SOV_gaz_final
+		}
+	}
+}
+
+ #     #                                                         #####
+ ##   ##    ##    #####  ######  #####   #  ######  #           #     #
+ # # # #   #  #     #    #       #    #  #  #       #                 #
+ #  #  #  #    #    #    #####   #    #  #  #####   #            #####
+ #     #  ######    #    #       #####   #  #       #           #
+ #     #  #    #    #    #       #   #   #  #       #           #
+ #     #  #    #    #    ######  #    #  #  ######  ######      #######
+
+
+SOV_upgrade_appropriate_materiel_designer_2_effect = {
+	#GRABIN
+	if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau
+		}
+		set_country_flag = SOV_merge_materiel_grabin_2_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau
+			add_idea = SOV_grabin_design_bureau_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau_1
+		}
+		set_country_flag = SOV_merge_materiel_grabin_2_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau_1
+			add_idea = SOV_grabin_design_bureau_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau_3
+		}
+		set_country_flag = SOV_merge_materiel_grabin_2_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau_3
+			add_idea = SOV_grabin_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau_1_3
+		}
+		set_country_flag = SOV_merge_materiel_grabin_2_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau_1_3
+			add_idea = SOV_grabin_design_bureau_final
+		}
+	}
+
+	#TULA
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant
+		}
+		set_country_flag = SOV_merge_materiel_tula_2_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant
+			add_idea = SOV_tula_arms_plant_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant_1
+		}
+		set_country_flag = SOV_merge_materiel_tula_2_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant_1
+			add_idea = SOV_tula_arms_plant_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant_3
+		}
+		set_country_flag = SOV_merge_materiel_tula_2_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant_3
+			add_idea = SOV_tula_arms_plant_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant_1_3
+		}
+		set_country_flag = SOV_merge_materiel_tula_2_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant_1_3
+			add_idea = SOV_tula_arms_plant_final
+		}
+	}
+
+	#GAZ
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz
+		}
+		set_country_flag = SOV_merge_materiel_gaz_2_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz
+			add_idea = SOV_gaz_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz_1
+		}
+		set_country_flag = SOV_merge_materiel_gaz_2_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz_1
+			add_idea = SOV_gaz_1_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz_3
+		}
+		set_country_flag = SOV_merge_materiel_gaz_2_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz_3
+			add_idea = SOV_gaz_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz_1_3
+		}
+		set_country_flag = SOV_merge_materiel_gaz_2_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz_1_3
+			add_idea = SOV_gaz_final
+		}
+	}
+}
+
+ #     #                                                         #####
+ ##   ##    ##    #####  ######  #####   #  ######  #           #     #
+ # # # #   #  #     #    #       #    #  #  #       #                 #
+ #  #  #  #    #    #    #####   #    #  #  #####   #            #####
+ #     #  ######    #    #       #####   #  #       #                 #
+ #     #  #    #    #    #       #   #   #  #       #           #     #
+ #     #  #    #    #    ######  #    #  #  ######  ######       #####
+
+SOV_upgrade_appropriate_materiel_designer_3_effect = {
+	#GRABIN
+	if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau
+		}
+		set_country_flag = SOV_merge_materiel_grabin_3_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau
+			add_idea = SOV_grabin_design_bureau_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau_1
+		}
+		set_country_flag = SOV_merge_materiel_grabin_3_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau_1
+			add_idea = SOV_grabin_design_bureau_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau_2
+		}
+		set_country_flag = SOV_merge_materiel_grabin_3_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau_2
+			add_idea = SOV_grabin_design_bureau_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_grabin_design_bureau_1_2
+		}
+		set_country_flag = SOV_merge_materiel_grabin_3_flag
+		swap_ideas = {
+			remove_idea = SOV_grabin_design_bureau_1_2
+			add_idea = SOV_grabin_design_bureau_final
+		}
+	}
+
+	#TULA
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant
+		}
+		set_country_flag = SOV_merge_materiel_tula_3_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant
+			add_idea = SOV_tula_arms_plant_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant_1
+		}
+		set_country_flag = SOV_merge_materiel_tula_3_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant_1
+			add_idea = SOV_tula_arms_plant_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant_2
+		}
+		set_country_flag = SOV_merge_materiel_tula_3_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant_2
+			add_idea = SOV_tula_arms_plant_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_tula_arms_plant_1_2
+		}
+		set_country_flag = SOV_merge_materiel_tula_3_flag
+		swap_ideas = {
+			remove_idea = SOV_tula_arms_plant_1_2
+			add_idea = SOV_tula_arms_plant_final
+		}
+	}
+
+	#GAZ
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz
+		}
+		set_country_flag = SOV_merge_materiel_gaz_3_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz
+			add_idea = SOV_gaz_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz_1
+		}
+		set_country_flag = SOV_merge_materiel_gaz_3_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz_1
+			add_idea = SOV_gaz_1_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz_2
+		}
+		set_country_flag = SOV_merge_materiel_gaz_3_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz_2
+			add_idea = SOV_gaz_2_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = SOV_gaz_1_2
+		}
+		set_country_flag = SOV_merge_materiel_gaz_3_flag
+		swap_ideas = {
+			remove_idea = SOV_gaz_1_2
+			add_idea = SOV_gaz_final
+		}
+	}
+}
+
+ ## #   #  ##  ###       ##  #  # #  # ###   ##  #  #      ## ###  ### ###  ### ###  ##
+#   #   # #  # #  #     #  # #  # #  # #  # #  # #  #     #   #  #  #  #  #  #   #  #
+ #  # # # #### ###      #    #### #  # ###  #    ####      #  ###   #  ###   #   #   #
+  # # # # #  # #        #  # #  # #  # #  # #  # #  #       # #     #  #  #  #   #    #
+##   # #  #  # #         ##  #  #  ##  #  #  ##  #  #     ##  #    ### #  # ###  #  ##
+
+
+SOV_increase_church_power = {
+	if = {
+		limit = { has_idea = SOV_church_power_4 }
+		add_political_power = 25
+	}
+	else_if = {
+		limit = { has_idea = SOV_church_power_3 }
+		swap_ideas = {
+			remove_idea = SOV_church_power_3
+			add_idea = SOV_church_power_4
+		}
+	}
+	else_if = {
+		limit = { has_idea = SOV_church_power_2 }
+		swap_ideas = {
+			remove_idea = SOV_church_power_2
+			add_idea = SOV_church_power_3
+		}
+	}
+	else_if = {
+		limit = { has_idea = SOV_church_power_1 }
+		swap_ideas = {
+			remove_idea = SOV_church_power_1
+			add_idea = SOV_church_power_2
+		}
+	}
+	else = {
+		effect_tooltip = {
+			swap_ideas = {
+				remove_idea = SOV_church_power_1
+				add_idea = SOV_church_power_2
+			}
+		}
+	}
+}
+
+SOV_decrease_church_power = {
+	if = {
+		limit = { has_idea = SOV_church_power_1 }
+		add_political_power = -25
+	}
+	else_if = {
+		limit = { has_idea = SOV_church_power_2 }
+		swap_ideas = {
+			remove_idea = SOV_church_power_2
+			add_idea = SOV_church_power_1
+		}
+	}
+	else_if = {
+		limit = { has_idea = SOV_church_power_3 }
+		swap_ideas = {
+			remove_idea = SOV_church_power_3
+			add_idea = SOV_church_power_2
+		}
+	}
+	else_if = {
+		limit = { has_idea = SOV_church_power_4 }
+		swap_ideas = {
+			remove_idea = SOV_church_power_4
+			add_idea = SOV_church_power_3
+		}
+	}
+	else = {
+		effect_tooltip = {
+			add_political_power = -25
+		}
+	}
+}
+
+###########################################################################################################################
+
+ ##   ##  #   # #   # #  # #  # ###  ## ###      ##  ### #   # ### #       #   #  ##  ###      ### ### ### ###  ##  ###  ##
+#  # #  # ## ## ## ## #  # ## #  #  #    #      #  #  #  #   #  #  #       #   # #  # #  #     #   #   #   #   #  #  #  #
+#    #  # # # # # # # #  # # ##  #   #   #      #     #   # #   #  #       # # # #### ###      ##  ##  ##  ##  #     #   #
+#  # #  # #   # #   # #  # #  #  #    #  #      #  #  #   # #   #  #       # # # #  # #  #     #   #   #   #   #  #  #    #
+ ##   ##  #   # #   #  ##  #  # ### ##   #       ##  ###   #   ### ###      # #  #  # #  #     ### #   #   ###  ##   #  ##
+
+###########################################################################################################################
+
+SOV_set_up_nkvd = {
+	random_owned_state = {
+		limit = { is_capital = yes }
+
+		create_unit = {
+			division = "name = \"5ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"6ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"7ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"8ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"9ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"10ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"11ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"12ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"13ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"14ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"15ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"16ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"17ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+		create_unit = {
+			division = "name = \"18ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+		}
+	}
+
+	IF = {
+		limit = {
+			OR = {
+				AND = {
+					has_idea = SOV_genrikh_yagoda
+					SOV_genrikh_yagoda = { has_character_flag = SOV_aligned_right_opposition_flag }
+				}
+				AND = {
+					has_idea = SOV_nikolay_yezhov
+					SOV_nikolay_yezhov = { has_character_flag = SOV_aligned_right_opposition_flag }
+				}
+			}
+		}
+		random_owned_controlled_state = {
+			create_unit = {
+				division = "name = \"1ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+			}
+			create_unit = {
+				division = "name = \"2ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+			}
+			create_unit = {
+				division = "name = \"3ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+			}
+			create_unit = {
+				division = "name = \"4ya NKVD Pogranichnaya Diviziya\" division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = PREV
+			}
+		}
+	}
+	IF = {
+		limit = {}
+		random_owned_controlled_state = {
+			create_unit = {
+				division = "division_template = \"NKVD Pogranichnaya Diviziya\" start_experience_factor = 0.2 start_equipment_factor = 1.0" owner = ROOT count = var:SOV.SOV_nkvd_divisions
+			}
+
+		}
+	}
+}
+
+SOV_set_up_red_army = {
+
+	delete_unit_template_and_units = {
+	    division_template = "Strelkovaya Diviziya"
+	    disband = yes
+	}
+	division_template = {
+		name = "Strelkovaya Diviziya"
+		division_names_group = SOV_INF_01
+
+		regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 1 y = 0 }
+			infantry = { x = 1 y = 1 }
+			infantry = { x = 1 y = 2 }
+			infantry = { x = 2 y = 0 }
+			infantry = { x = 2 y = 1 }
+			infantry = { x = 2 y = 2 }
+		}
+		support = {
+			artillery = { x = 0 y = 0 }
+		}
+	}
+	delete_unit_template_and_units = {
+	    division_template = "Motostrelkovaya Diviziya"
+	    disband = yes
+	}
+
+	division_template = {
+		name = "Motostrelkovaya Diviziya"
+		division_names_group = SOV_MOT_01
+		regiments = {
+			motorized = { x = 0 y = 0 }
+			motorized = { x = 0 y = 1 }
+			motorized = { x = 0 y = 2 }
+			motorized = { x = 1 y = 0 }
+			motorized = { x = 1 y = 1 }
+			motorized = { x = 1 y = 2 }
+		}
+	}
+	delete_unit_template_and_units = {
+	    division_template = "Kavaleriyskaya Diviziya"
+	    disband = yes
+	}
+	division_template = {
+		name = "Kavaleriyskaya Diviziya" 	# Cavalry Division
+		division_names_group = SOV_CAV_01
+
+		regiments = {
+			cavalry = { x = 0 y = 0 }
+			cavalry = { x = 0 y = 1 }
+			cavalry = { x = 1 y = 0 }
+			cavalry = { x = 1 y = 1 }
+		}
+	}
+	var:SOV.SOV_stalinist_civil_war_start_state = {
+
+		create_unit = {
+			division = "name = \"Strelkovaya Diviziya\" division_template = \"Strelkovaya Diviziya\" start_experience_factor = 0.1 start_equipment_factor = 1.0" owner = PREV count = var:PREV.civil_war_army_size
+		}
+	}
+	random_owned_state = {
+		limit = {
+			NOT = { state = var:SOV.SOV_stalinist_civil_war_start_state  }
+		}
+		create_unit = {
+			division = "name = \"Strelkovaya Diviziya\" division_template = \"Strelkovaya Diviziya\" start_experience_factor = 0.1 start_equipment_factor = 1.0" owner = PREV count = var:PREV.civil_war_army_size
+		}
+	}
+	random_owned_state = {
+		limit = {
+			NOT = { state = var:SOV.SOV_stalinist_civil_war_start_state  }
+			any_neighbor_state = { state = var:SOV.SOV_stalinist_civil_war_start_state  }
+		}
+		create_unit = {
+			division = "name = \"Moskva Proletarskaya Motostrelkovaya Diviziya\" division_template = \"Motostrelkovaya Diviziya\" start_experience_factor = 0.1 start_equipment_factor = 1.0" owner = PREV count = 1
+		}
+	}
+	random_owned_state = {
+		limit = {
+			any_neighbor_state = { state = var:SOV.SOV_stalinist_civil_war_start_state }
+		}
+		create_unit = {
+			division = "name = \"Kavaleriyskaya Diviziya\" division_template = \"Kavaleriyskaya Diviziya\" start_experience_factor = 0.1 start_equipment_factor = 1.0" owner = PREV count = var:PREV.civil_war_army_size
+		}
+	}
+	clear_variable = PREV.civil_war_army_size
+
+
+}
+
+SOV_set_up_left_opposition_militia = {
+	division_template = {
+	    name = "Trotskyist Workers' Militia"
+	    is_locked = yes
+	    division_names_group = SOV_INF_01
+	    priority = 0
+	    template_counter = 0
+	    regiments = {
+	        infantry = { x = 0 y = 0 }
+	        infantry = { x = 0 y = 1 }
+	        infantry = { x = 0 y = 2 }
+	    }
+	    is_locked = yes
+	}
+	division_template = {
+	    name = "Trotskyist Peasant Militia"
+	    is_locked = yes
+	    division_names_group = SOV_INF_01
+	    priority = 0
+	    template_counter = 14
+	    regiments = {
+	        infantry = { x = 0 y = 0 }
+	        infantry = { x = 0 y = 1 }
+	        infantry = { x = 1 y = 0 }
+	        infantry = { x = 1 y = 1 }
+	    }
+	    is_locked = yes
+	}
+	every_owned_state = {
+		IF = {
+			limit = {
+				OR = {
+					has_state_category = city
+					has_state_category = large_city
+					has_state_category = megalopolis
+					has_state_category = metropolis
+				}
+			}
+			create_unit = {
+				division = "name = \"Workers' Miltia Brigade\" division_template = \"Trotskyist Workers' Militia\" start_experience_factor = 0.09 start_equipment_factor = 0.85" owner = ROOT
+			}
+		}
+		ELSE_IF = {
+			limit = {
+				NOT = { has_state_category = enclave }
+				NOT = { has_state_category = wasteland }
+			}
+			create_unit = {
+				division = "name = \"Peasant Militia brigade\" division_template = \"Trotskyist Peasant Militia\" start_experience_factor = 0.01 start_equipment_factor = 0.55" owner = ROOT
+			}
+		}
+	}
+}
+
+SOV_set_up_right_opposition_militia = {
+	division_template = {
+	    name = "Bukharinist Workers' Militia"
+	    is_locked = yes
+	    division_names_group = SOV_INF_01
+	    priority = 0
+	    template_counter = 0
+	    regiments = {
+	        infantry = { x = 0 y = 0 }
+	        infantry = { x = 0 y = 1 }
+	        infantry = { x = 0 y = 2 }
+	    }
+	    is_locked = yes
+	}
+	division_template = {
+	    name = "Bukharinist Peasant Militia"
+	    is_locked = yes
+	    division_names_group = SOV_INF_01
+	    priority = 0
+	    template_counter = 14
+	    regiments = {
+	        infantry = { x = 0 y = 0 }
+	        infantry = { x = 0 y = 1 }
+	        infantry = { x = 1 y = 0 }
+	        infantry = { x = 1 y = 1 }
+	    }
+	    is_locked = yes
+	}
+	every_owned_state = {
+		IF = {
+			limit = {
+				OR = {
+					has_state_category = city
+					has_state_category = large_city
+					has_state_category = megalopolis
+					has_state_category = metropolis
+				}
+			}
+			create_unit = {
+				division = "name = \"Workers' Miltia Brigade\" division_template = \"Bukharinist Workers' Militia\" start_experience_factor = 0.09 start_equipment_factor = 0.85" owner = ROOT
+			}
+		}
+		ELSE_IF = {
+			limit = {
+				NOT = { has_state_category = enclave }
+				NOT = { has_state_category = wasteland }
+			}
+			create_unit = {
+				division = "name = \"Peasant Militia brigade\" division_template = \"Bukharinist Peasant Militia\" start_experience_factor = 0.01 start_equipment_factor = 0.55" owner = ROOT
+			}
+		}
+		# More Peasant Militia if collectivization has been reversed
+		IF = {
+			limit = {
+				ROOT = { has_completed_focus = SOV_reverse_the_collectivization_process }
+				NOT = { has_state_category = enclave }
+				NOT = { has_state_category = wasteland }
+			}
+			create_unit = {
+				division = "name = \"Peasant Militia brigade\" division_template = \"Bukharinist Peasant Militia\" start_experience_factor = 0.01 start_equipment_factor = 0.55" owner = ROOT
+			}
+		}
+	}
+}
+
+SOV_set_up_extras_from_concessions = {
+	# Extra Troops from Japan?
+	IF = {
+		limit = {
+			has_country_flag = SOV_CSW_transfer_vladivostok_flag
+			any_country= {
+				original_tag = SOV
+				owns_state = 408
+			}
+		}
+		SOV_set_up_japanese_troops = yes
+	}
+	# Equipment from Japan in return for North Sakhalin
+	IF = {
+		limit = {
+			has_country_flag = SOV_CSW_transfer_sakhalin_flag
+			any_country= {
+				original_tag = SOV
+				owns_state = 655
+			}
+		}
+		IF = {
+			limit = { check_variable = { SOV.SOV_japanese_rifles > 0 } }
+			add_equipment_to_stockpile = {
+			    type = infantry_equipment
+				amount = SOV.SOV_japanese_rifles
+				producer = JAP
+			}
+		}
+		IF = {
+			limit = { check_variable = { SOV.SOV_japanese_guns > 0 } }
+			add_equipment_to_stockpile = {
+			    type = artillery_equipment
+				amount = SOV.SOV_japanese_guns
+				producer = JAP
+			}
+		}
+		IF = {
+			limit = { check_variable = { SOV.SOV_japanese_fighters > 0 } }
+			add_equipment_to_stockpile = {
+			    type = small_plane_airframe
+				amount = SOV.SOV_japanese_fighters
+				producer = JAP
+			}
+		}
+	}
+
+	# Advisors from Germany
+	IF = {
+		limit = {
+			has_country_flag = SOV_CSW_german_advisors_flag
+		}
+		GER = {
+			country_event = {
+				id = NSB_soviet_civil_war_common.109
+				hours = 1
+			}
+		}
+	}
+
+	# Equipment from Germany
+	IF = { 
+		limit = { 
+			has_country_flag = SOV_CSW_baku_oil_flag 
+		}
+		IF = {
+			limit = {
+				NOT = {
+					has_dlc = "No Step Back"
+				}
+			}
+			add_equipment_to_stockpile = { type = light_tank_equipment_2 amount = 100 producer = GER }
+		}
+		ELSE = { 
+			add_equipment_to_stockpile = { type = light_tank_chassis_2 amount = 100 producer = GER variant_name = "Panzer II Ausf. a" } 
+		}
+		add_equipment_to_stockpile = { type = infantry_equipment_0 amount = 200 producer = GER }
+	}
+
+
+
+
+	# German Ukrainian Insurrection
+	IF = {
+		limit = {
+			has_country_flag = SOV_CSW_ukraine_germany_ready_flag
+		}
+		country_event = {
+			id = NSB_soviet_civil_war_common.114
+			hours = 1
+		}
+	}
+
+	# Adding weapons for trotsky
+	for_each_loop = {
+		array = SOV.many_weapons_array
+		value = weapons_country
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 200
+			producer = var:weapons_country
+		}
+	}
+	for_each_loop = {
+		array = SOV.few_weapons_array
+		value = weapons_country
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 50
+			producer = var:weapons_country
+		}
+	}
+}
+
+#######################
+### COUNTRY LEADERS ###
+#######################
+
+SOV_promote_to_country_leader_beriya = {
+	if = {
+		limit = {
+			has_dlc = "La Resistance"
+		}
+		add_country_leader_role = {
+			character = "SOV_lavrenty_beriya"
+			country_leader = {
+				ideology = stalinism
+				traits = { unscrupulous_orchestrator }
+				expire = "1953.12.23.1"
+			}
+			promote_leader = yes
+		}
+	}
+	else = {
+		add_country_leader_role = {
+			character = "SOV_lavrenty_beriya"
+			country_leader = {
+				ideology = stalinism
+				traits = { unscrupulous_orchestrator_no_lar }
+				expire = "1953.12.23.1"
+			}
+			promote_leader = yes
+		}
+	}
+	SOV = { set_country_flag = SOV_beriya_country_leader_flag }
+}
+
+SOV_promote_to_country_leader_trotsky = {
+	add_country_leader_role = {
+		character = "SOV_lev_trotsky"
+		country_leader = {
+			ideology = marxism
+			traits = { permanent_revolutionary }
+			expire = "1965.1.1.1"
+		}
+		promote_leader = yes
+	}
+	SOV = { set_country_flag = SOV_trotsky_country_leader_flag }
+}
+
+SOV_promote_to_country_leader_smirnov = {
+	add_country_leader_role = {
+		character = "SOV_ivan_smirnov"
+		country_leader = {
+			ideology = marxism
+			traits = { the_siberian_lenin }
+			expire = "1965.1.1.1"
+		}
+		promote_leader = yes
+	}
+	SOV = { set_country_flag = SOV_smirnov_country_leader_flag }
+}
+
+SOV_promote_to_country_leader_bukharin = {
+	add_country_leader_role = {
+		character = "SOV_nikolay_bukharin"
+		country_leader = {
+			ideology = marxism
+			traits = { defender_of_the_peasantry }
+			expire = "1965.1.1.1"
+		}
+		promote_leader = yes
+	}
+	SOV = { set_country_flag = SOV_bukharin_country_leader_flag }
+}
+
+SOV_promote_to_country_leader_rykov = {
+	add_country_leader_role = {
+		character = "SOV_aleksey_rykov"
+		country_leader = {
+			ideology = marxism
+			traits = { labor_defense_organizer }
+			expire = "1965.1.1.1"
+		}
+		promote_leader = yes
+	}
+	SOV = { set_country_flag = SOV_rykov_country_leader_flag }
+}
+
+SOV_promote_to_country_leader_zinovyev = {
+	add_country_leader_role = {
+		character = "SOV_grigory_zinovyev"
+		country_leader = {
+			ideology = marxism
+			traits = { born_agitator }
+			expire = "1965.1.1.1"
+		}
+		promote_leader = yes
+	}
+	SOV = { set_country_flag = SOV_zinovyev_country_leader_flag }
+}
+
+SOV_promote_to_country_leader_kamenev = {
+	add_country_leader_role = {
+		character = "SOV_lev_kamenev"
+		country_leader = {
+			ideology = marxism
+			traits = { the_faded_star }
+			expire = "1965.1.1.1"
+		}
+		promote_leader = yes
+	}
+	SOV = { set_country_flag = SOV_kamenev_country_leader_flag }
+}
+
+SOV_promote_to_country_leader_provisional = {
+	SOV_provisional_government = {
+		remove_trait = {
+			ideology = despotism
+			trait = emigre_connections
+		}
+		remove_trait = {
+			ideology = despotism
+			trait = desperate_gambit
+		}
+		remove_trait = {
+			ideology = despotism
+			trait = dysfunctional_assembly
+		}
+		add_trait = {
+			ideology = despotism
+			trait = internal_rivalry
+		}
+		promote_character = yes
+	}
+}
+# japanese_expeditionary_leader_flag
+SOV_set_up_japanese_troops = {
+	division_template = {
+	    name = "Japanese Expeditionary Force"
+	    division_names_group = SOV_JAP_INF
+	    is_locked = yes
+	    priority = 1
+	    template_counter = 3
+	    regiments = {
+	        infantry = { x = 0 y = 0 }
+	        infantry = { x = 0 y = 1 }
+	        infantry = { x = 0 y = 2 }
+	        infantry = { x = 1 y = 0 }
+	        infantry = { x = 1 y = 1 }
+	        infantry = { x = 1 y = 2 }
+	        artillery_brigade = { x= 2 y = 0}
+	        artillery_brigade = { x= 2 y = 1}
+	    }
+	    is_locked = yes
+	}
+	JAP = {
+		var:SOV.SOV_japanese_general = {
+			unit_leader_event = {
+				id = NSB_soviet_civil_war_common.129
+				hours = 1
+			}
+		}
+	}
+
+	var:SOV_civil_war_start_state = {
+		create_unit = {
+			division = "division_template = \"Japanese Expeditionary Force\" start_experience_factor = 0.2 start_equipment_factor = 0.95" owner = ROOT count = 24
+		}
+		
+
+	}
+
+	# Add air support 
+
+	add_equipment_to_stockpile = { type = small_plane_airframe  amount = 100 producer = JAP }
+	add_equipment_to_stockpile = { type = medium_plane_airframe  amount = 50 producer = JAP }
+	
+	
+}
+
+# Start creating HQ for Civil war
+SOV_start_setting_up_hq_state = {
+	set_country_flag = { flag = SOV_align_state_in_process days = 5 value = 1 }
+	FROM = { set_state_flag = SOV_hq_state_selected }
+	set_country_flag = SOV_hq_state_selected_country_flag
+}
+
+
+
+
+SOV_launch_wreckers = {
+	IF = {
+		limit = {
+			has_country_flag = SOV_organize_wreckers_flag
+		}
+		SOS = {
+			add_timed_idea = {
+				idea = SOV_organized_wreckers_idea
+				days = 365
+			}
+		}
+	}
+}
+
+SOV_the_eyes_fear_units = {
+	# Don't try to cheat ;)
+	hidden_effect = {
+		delete_unit_template_and_units = {
+			division_template = "Ruki"
+			disband = yes
+		}
+	}
+	division_template = {
+		name = "Ruki"			#
+		division_names_group = SOV_INF_03
+		regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 1 y = 0 }
+			infantry = { x = 1 y = 1 }
+			infantry = { x = 1 y = 2 }
+		}
+	}
+	set_temp_variable = { temp_units_siberia_index = 0 }
+	# Add units in Siberia
+	while_loop_effect = {
+		limit = { check_variable = { temp_units_siberia_index < 8 }}
+		random_state = {
+			limit = {
+				OR = {
+					is_owned_by = SOS
+					is_owned_by = SOV
+				}
+				OR  = {
+					region = 149 # Eastern Siberia
+					region = 256
+					region = 257
+					region = 258
+					region = 259
+					region = 260
+					region = 151 # Western Siberia
+					region = 261 
+					region = 262 
+				}
+				NOT = { has_state_flag = SOV_ruki_flag } # Only one per state
+			}
+			create_unit = {
+				division = "division_template = \"Ruki\" start_experience_factor = 0.2"
+				owner = SOV
+				allow_spawning_on_enemy_provs = yes
+				count = 1
+			}
+			add_to_temp_variable = { temp_units_siberia_index = 1}
+			set_state_flag = SOV_ruki_flag
+		}
+	}
+
+	# Add units in the Ukraine
+	set_temp_variable = { temp_units_ukraine_index = 0 }
+	while_loop_effect = {
+		limit = { check_variable = { temp_units_ukraine_index < 4 } }
+		random_state = {
+			limit = {
+				OR = {
+					is_owned_by = SOS
+					is_owned_by = SOV
+				}
+				OR  = {
+					region = 130 # Ukraine
+					region = 135 # Kuban
+				}
+				NOT = { has_state_flag = SOV_ruki_flag }  # Only one per state
+			}
+			create_unit = {
+				division = "division_template = \"Ruki\" start_experience_factor = 0.2"
+				owner = SOV
+				allow_spawning_on_enemy_provs = yes
+				count = 1
+			}
+			add_to_temp_variable = { temp_units_ukraine_index = 1 }
+			set_state_flag = SOV_ruki_flag
+		}
+	}
+
+
+}
+
+SOV_popular_uprising_units = {
+	# Don't try to cheat ;)
+	hidden_effect = {
+		delete_unit_template_and_units = {
+			division_template = "Opposition Partisan Brigade"
+			disband = yes
+		}
+	}
+	division_template = {
+		name = "Opposition Partisan Brigade"			#
+		# division_names_group = SOV_INF_04
+		priority = 0
+	    template_counter = 5
+		regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+		}
+		is_locked = yes
+	}
+	set_temp_variable = { temp_partisan_units_index = 0 }
+	set_temp_variable = { temp_partisan_units_number = SOV_opposition_popular_support }
+	divide_temp_variable = { temp_partisan_units_number = 5 }
+	add_to_temp_variable = { temp_partisan_units_number = 1 }
+	# Add units in Prepped states
+	# LOG = "Support: [?SOV_opposition_popular_support]"
+	every_state = {
+		limit = {
+			OR = {
+				is_owned_by = SOV
+				is_owned_by = SOS
+			}
+			has_state_flag = SOV_opposition_partisans_flag
+		}
+		create_unit = {
+			division = "name = \"Partisans\" division_template = \"Opposition Partisan Brigade\" start_experience_factor = 0.02"
+			owner = SOV
+			allow_spawning_on_enemy_provs = yes
+			count = 1
+		}
+	}
+
+	while_loop_effect = {
+		limit = { check_variable = { temp_partisan_units_index < temp_partisan_units_number }}
+		random_state = {
+			limit = {
+				is_owned_by = SOS
+				NOT = { region = 132 } # Leningrad
+				NOT  = { region = 133 } # Central Russia
+				NOT  = { region = 131 } # Western Russia
+				NOT = { has_state_flag = SOV_opposition_partisans_flag } # Only one per state
+			}
+			create_unit = {
+				division = "name = \"Partisans\" division_template = \"Opposition Partisan Brigade\" start_experience_factor = 0.02"
+				owner = SOV
+				allow_spawning_on_enemy_provs = yes
+				count = 1
+			}
+			add_to_temp_variable = { temp_partisan_units_index = 1 }
+			set_state_flag = SOV_opposition_partisans_flag
+		}
+	}
+}
+
+
+SOV_opposition_support_very_low_increase_effect = {
+	custom_effect_tooltip = SOV_opposition_support_very_low_increase_effect_tt
+	add_to_variable = { SOV_opposition_popular_support = 1 }
+	clamp_variable = {
+		var = SOV_opposition_popular_support
+		max = 60
+		min = 0
+	}
+}
+SOV_opposition_support_low_increase_effect = {
+	custom_effect_tooltip = SOV_opposition_support_low_increase_effect_tt
+	add_to_variable = { SOV_opposition_popular_support = 2 }
+	clamp_variable = {
+		var = SOV_opposition_popular_support
+		max = 60
+		min = 0
+	}
+}
+SOV_opposition_support_medium_increase_effect = {
+	custom_effect_tooltip = SOV_opposition_support_medium_increase_effect_tt
+	add_to_variable = { SOV_opposition_popular_support = 3 }
+	clamp_variable = {
+		var = SOV_opposition_popular_support
+		max = 60
+		min = 0
+	}
+}
+SOV_opposition_support_high_increase_effect = {
+	custom_effect_tooltip = SOV_opposition_support_high_increase_effect_tt
+	add_to_variable = { SOV_opposition_popular_support = 5 }
+	clamp_variable = {
+		var = SOV_opposition_popular_support
+		max = 60
+		min = 0
+	}
+}
+SOV_opposition_support_low_decrease_effect = {
+	custom_effect_tooltip = SOV_opposition_support_low_decrease_effect_tt
+	subtract_from_variable = { SOV_opposition_popular_support = 1 }
+	clamp_variable = {
+		var = SOV_opposition_popular_support
+		max = 60
+		min = 0
+	}
+}
+
+SOV_launch_stalinist_counter_measure = {
+	IF = {
+		limit = {
+			NOT = { has_global_flag = SOV_soviet_civil_war_over } # Sanity check, in order not to activate more missions once the war has started
+		}
+		country_event = {
+			id = NSB_soviet_civil_war_common.004
+			days = 45 # simulating a cooldown
+			random_days = 10
+		}
+	}
+	IF = {
+		limit = { NOT = { has_country_flag = SOV_stalinist_focuses_started } } # Only first time
+		set_country_flag = SOV_stalinist_focuses_started
+		country_event = {
+			id = NSB_soviet_civil_war_common.005
+			days = 70
+		}
+	}
+}
+
+SOV_permanent_revolution_spawn_fifth_columnists_effect = {
+	if = {
+		limit = {
+			FROM = {
+				any_controlled_state = {
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 750
+						}
+					}
+				}
+			}
+		}
+		FROM = {
+			random_controlled_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 750
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			FROM = {
+				any_controlled_state = {
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 1500
+						}
+					}
+				}
+			}
+		}
+		random_state = {
+			limit = {
+				is_controlled_by = FROM
+				is_in_home_area = yes
+				is_capital = no
+				NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+				any_state = {
+					is_controlled_by = ROOT
+					distance_to = {
+						target = PREV
+						value < 1500
+					}
+				}
+			}
+			set_state_flag = SOV_permanent_revolution_uprising_flag
+			create_unit = {
+				division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+				owner = ROOT
+				allow_spawning_on_enemy_provs = yes
+			}
+			create_unit = {
+				division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+				owner = ROOT
+				allow_spawning_on_enemy_provs = yes
+			}
+			create_unit = {
+				division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+				owner = ROOT
+				allow_spawning_on_enemy_provs = yes
+			}
+		}
+	}
+	else = {
+		random_state = {
+			limit = {
+				is_controlled_by = FROM
+				is_in_home_area = yes
+				is_capital = no
+				NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+			}
+			set_state_flag = SOV_permanent_revolution_uprising_flag
+			create_unit = {
+				division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+				owner = ROOT
+				allow_spawning_on_enemy_provs = yes
+			}
+			create_unit = {
+				division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+				owner = ROOT
+				allow_spawning_on_enemy_provs = yes
+			}
+			create_unit = {
+				division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+				owner = ROOT
+				allow_spawning_on_enemy_provs = yes
+			}
+		}
+	}
+
+	if = {
+		limit = {
+			FROM = {
+				num_of_controlled_states > 4
+				communism > 0.1
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					any_controlled_state = {
+						is_in_home_area = yes
+						is_capital = no
+						NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+						any_state = {
+							is_controlled_by = ROOT
+							distance_to = {
+								target = PREV
+								value < 750
+							}
+						}
+					}
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 750
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				FROM = {
+					any_controlled_state = {
+						is_in_home_area = yes
+						is_capital = no
+						NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+						any_state = {
+							is_controlled_by = ROOT
+							distance_to = {
+								target = PREV
+								value < 1500
+							}
+						}
+					}
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 1500
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		else = {
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				num_of_controlled_states > 6
+				communism > 0.2
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					any_controlled_state = {
+						is_in_home_area = yes
+						is_capital = no
+						NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+						any_state = {
+							is_controlled_by = ROOT
+							NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+							distance_to = {
+								target = PREV
+								value < 750
+							}
+						}
+					}
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 750
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				FROM = {
+					any_controlled_state = {
+						is_in_home_area = yes
+						is_capital = no
+						NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+						any_state = {
+							is_controlled_by = ROOT
+							NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+							distance_to = {
+								target = PREV
+								value < 1500
+							}
+						}
+					}
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 1500
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		else = {
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				num_of_controlled_states > 8
+				communism > 0.3
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					any_controlled_state = {
+						is_in_home_area = yes
+						is_capital = no
+						NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+						any_state = {
+							is_controlled_by = ROOT
+							distance_to = {
+								target = PREV
+								value < 750
+							}
+						}
+					}
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 750
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 750
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				FROM = {
+					any_controlled_state = {
+						is_in_home_area = yes
+						is_capital = no
+						NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+						any_state = {
+							is_controlled_by = ROOT
+							distance_to = {
+								target = PREV
+								value < 1500
+							}
+						}
+					}
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 1500
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 1500
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		else = {
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				num_of_controlled_states > 10
+				communism > 0.4
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					any_controlled_state = {
+						is_in_home_area = yes
+						is_capital = no
+						NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+						any_state = {
+							is_controlled_by = ROOT
+							distance_to = {
+								target = PREV
+								value < 750
+							}
+						}
+					}
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 750
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 750
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				FROM = {
+					any_controlled_state = {
+						is_in_home_area = yes
+						is_capital = no
+						NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+						any_state = {
+							is_controlled_by = ROOT
+							distance_to = {
+								target = PREV
+								value < 1500
+							}
+						}
+					}
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 1500
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+					any_state = {
+						is_controlled_by = ROOT
+						distance_to = {
+							target = PREV
+							value < 1500
+						}
+					}
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		else = {
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+			random_state = {
+				limit = {
+					is_controlled_by = FROM
+					is_in_home_area = yes
+					is_capital = no
+					NOT = { has_state_flag = SOV_permanent_revolution_uprising_flag }
+				}
+				set_state_flag = SOV_permanent_revolution_uprising_flag
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "division_template = \"Trotskyist Revolutionary Militias\" start_experience_factor = 0.1"
+					owner = ROOT
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+	}
+}
+
+####### Change stuff based on ideology #######
+
+SOV_replace_stuff_based_on_ideology_effect = {
+	### FIVE YEAR PLANS
+	if = {
+		limit = {
+			NOT = { has_government = communism }
+		}
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_third_five_year_plan_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_third_five_year_plan_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_third_five_year_plan_dynamic_modifier_alt }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_third_five_year_plan_civilian_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_third_five_year_plan_civilian_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_third_five_year_plan_civilian_dynamic_modifier_alt }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_third_five_year_plan_military_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_third_five_year_plan_military_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_third_five_year_plan_military_dynamic_modifier_alt }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_fourth_five_year_plan_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_fourth_five_year_plan_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_fourth_five_year_plan_dynamic_modifier_alt }
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_third_five_year_plan_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_third_five_year_plan_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_third_five_year_plan_dynamic_modifier }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_third_five_year_plan_civilian_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_third_five_year_plan_civilian_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_third_five_year_plan_civilian_dynamic_modifier }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_third_five_year_plan_military_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_third_five_year_plan_military_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_third_five_year_plan_military_dynamic_modifier }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_fourth_five_year_plan_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_fourth_five_year_plan_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_fourth_five_year_plan_dynamic_modifier }
+		}
+	}
+
+	### USSR ACADEMIES OF SCIENCES
+	if = { #IS NOT COMMIE -> ADD ALT STUFF
+		limit = {
+			NOT = { has_government = communism }
+		}
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_ussr_academy_of_sciences_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_ussr_academy_of_sciences_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_ussr_academy_of_sciences_dynamic_modifier_alt }
+		}
+	}
+	else = { #IS COMMIE -> ADD REGULAR STUFF
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_ussr_academy_of_sciences_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_ussr_academy_of_sciences_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_ussr_academy_of_sciences_dynamic_modifier }
+		}
+	}
+
+	### SOVIET AIRFORCE
+	if = { #IS NOT COMMIE -> ADD ALT STUFF
+		limit = {
+			NOT = { has_government = communism }
+		}
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_soviet_airforce_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_soviet_airforce_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_soviet_airforce_dynamic_modifier_alt }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_soviet_airforce_aircraft_production_focus_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_soviet_airforce_aircraft_production_focus_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_soviet_airforce_aircraft_production_focus_dynamic_modifier_alt }
+		}
+	}
+	else = { #IS COMMIE -> ADD REGULAR STUFF
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_soviet_airforce_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_soviet_airforce_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_soviet_airforce_dynamic_modifier }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_soviet_airforce_aircraft_production_focus_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_soviet_airforce_aircraft_production_focus_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_soviet_airforce_aircraft_production_focus_dynamic_modifier }
+		}
+	}
+
+	### THE RED FLEET
+	if = { #IS NOT COMMIE -> ADD ALT STUFF
+		limit = {
+			NOT = { has_government = communism }
+		}
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_fleet_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_fleet_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_the_red_fleet_dynamic_modifier_alt }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_1_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_1_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_1_dynamic_modifier_alt }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_2_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_2_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_2_dynamic_modifier_alt }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_1_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_1_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_1_dynamic_modifier_alt }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_2_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_2_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_2_dynamic_modifier_alt }
+		}
+	}
+	else = { #IS COMMIE -> ADD REGULAR STUFF
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_fleet_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_fleet_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_the_red_fleet_dynamic_modifier }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_1_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_1_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_1_dynamic_modifier }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_2_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_2_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_the_red_fleet_surface_2_dynamic_modifier }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_1_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_1_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_1_dynamic_modifier }
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_2_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_2_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_the_red_fleet_submarine_2_dynamic_modifier }
+		}
+	}
+
+	### THE RED ARMY
+	if = { #IS NOT COMMIE -> ADD ALT STUFF
+		limit = {
+			NOT = { has_government = communism }
+		}
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_army_dynamic_modifier }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_army_dynamic_modifier }
+			add_dynamic_modifier = { modifier = SOV_the_red_army_dynamic_modifier_alt }
+		}
+	}
+	else = { #IS COMMIE -> ADD REGULAR STUFF
+		if = {
+			limit = {
+				has_dynamic_modifier = { modifier = SOV_the_red_army_dynamic_modifier_alt }
+			}
+			remove_dynamic_modifier = { modifier = SOV_the_red_army_dynamic_modifier_alt }
+			add_dynamic_modifier = { modifier = SOV_the_red_army_dynamic_modifier }
+		}
+	}
+}
