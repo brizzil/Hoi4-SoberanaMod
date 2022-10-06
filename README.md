@@ -1,6 +1,5 @@
 # Hoi4-SoberanaMod
  
 Para instalar o mod:
-1- jogue a pasta na pasta de Mods
-2- Pegue o arquivo "Hoi4-SoberanaMod.mod" e jogue na pasta  de mods também
-3- Altere o caminho da pasta do mod no arquivo acima
+1- jogue a pasta em documents/Paradox Interactive/Hearts of Iron IV/mod
+2- Corte o arquivo "Hoi4-SoberanaMod.mod" de dentro da pasta e cole-o na pasta mod

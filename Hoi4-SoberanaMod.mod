@@ -8,4 +8,4 @@ tags={
 }
 name="Hoi4-SoberanaMod"
 supported_version="1.12.2"
-path="Hoi4-SoberanaMod"
+path="mod/Hoi4-SoberanaMod/"
