@@ -6013,11 +6013,11 @@ country_event = {
 				}
 				OR = { 
 					NOT = { has_character = SOV_grigory_zinovyev }
-					NOT = { has_completed_focus = SOV_align_the_zinovyevites }
+					NOT = {   }
 				}
 				OR = { 
 					NOT = { has_character = SOV_lev_kamenev }
-					NOT = { has_completed_focus = SOV_align_the_zinovyevites }
+					NOT = {   }
 				}
 			}
 		}
@@ -6107,7 +6107,7 @@ country_event = {
 		}
 		trigger = {
 			has_character = SOV_grigory_zinovyev
-			has_completed_focus = SOV_align_the_zinovyevites
+			 
 		}
 
 		# SET UP NEW CAPITAL - This is where the player will launch the uprising from
@@ -6135,7 +6135,7 @@ country_event = {
 		}
 		trigger = {
 			has_character = SOV_lev_kamenev
-			has_completed_focus = SOV_align_the_zinovyevites
+			 
 		}
 
 		# SET UP NEW CAPITAL - This is where the player will launch the uprising from
@@ -6212,11 +6212,11 @@ country_event = {
 				NOT = { has_character = SOV_aleksey_rykov }
 				OR = { 
 					NOT = { has_character = SOV_grigory_zinovyev }
-					NOT = { has_completed_focus = SOV_align_the_zinovyevites }
+					NOT = {   }
 				}
 				OR = { 
 					NOT = { has_character = SOV_lev_kamenev }
-					NOT = { has_completed_focus = SOV_align_the_zinovyevites }
+					NOT = {   }
 				}
 			}
 		}
@@ -6289,7 +6289,7 @@ country_event = {
 		name = NSB_soviet_communist_civil_war.002.d
 		trigger = {
 			has_character = SOV_grigory_zinovyev
-			has_completed_focus = SOV_align_the_zinovyevites
+			 
 		}
 		# Set New Country Leader
 		SOV_promote_to_country_leader_zinovyev = yes
@@ -6304,7 +6304,7 @@ country_event = {
 		name = NSB_soviet_communist_civil_war.002.e
 		trigger = {
 			has_character = SOV_lev_kamenev
-			has_completed_focus = SOV_align_the_zinovyevites
+			 
 		}
 		# Set New Country Leader
 		SOV_promote_to_country_leader_kamenev = yes
@@ -6400,11 +6400,11 @@ country_event = {
 				NOT = { has_character = SOV_aleksey_rykov }
 				OR = { 
 					NOT = { has_character = SOV_grigory_zinovyev }
-					NOT = { has_completed_focus = SOV_align_the_zinovyevites }
+					NOT = {   }
 				}
 				OR = { 
 					NOT = { has_character = SOV_lev_kamenev }
-					NOT = { has_completed_focus = SOV_align_the_zinovyevites }
+					NOT = {   }
 				}
 			}
 		}
@@ -6495,7 +6495,7 @@ country_event = {
 		}
 		trigger = {
 			has_character = SOV_grigory_zinovyev
-			has_completed_focus = SOV_align_the_zinovyevites
+			 
 		}
 
 		# SET UP NEW CAPITAL - This is where the player will launch the uprising from
@@ -6523,7 +6523,7 @@ country_event = {
 		}
 		trigger = {
 			has_character = SOV_lev_kamenev
-			has_completed_focus = SOV_align_the_zinovyevites
+			 
 		}
 
 		# SET UP NEW CAPITAL - This is where the player will launch the uprising from

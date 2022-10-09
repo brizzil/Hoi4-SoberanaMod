@@ -7,5 +7,5 @@ tags={
 	"Events"
 }
 name="Hoi4-SoberanaMod"
-supported_version="1.12.2"
+supported_version="1.12.3"
 path="mod/Hoi4-SoberanaMod/"
