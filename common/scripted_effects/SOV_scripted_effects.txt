@@ -1349,21 +1349,9 @@ SOV_manage_spanish_generals_exiled_in_ussr_effect = {
 				#Líster joins the USSR as a Stalinist
 				if = {
 					limit = {
-						has_trait = trait_SPR_anti_stalinist_loyalties
-					}
-					remove_unit_leader_trait = trait_SPR_anti_stalinist_loyalties
-				}
-				if = {
-					limit = {
 						has_trait = trait_SPR_republican_loyalties
 					}
 					remove_unit_leader_trait = trait_SPR_republican_loyalties
-				}
-				if = {
-					limit = {
-						NOT = { has_trait = trait_SPR_stalinist_loyalties }
-					}
-					add_unit_leader_trait = trait_SPR_stalinist_loyalties
 				}
 			}
 			set_country_flag = SOV_go_go_general_flag
@@ -1394,18 +1382,6 @@ SOV_manage_spanish_generals_exiled_in_ussr_effect = {
 					}
 					remove_unit_leader_trait = trait_SPR_republican_loyalties
 				}
-				if = {
-					limit = {
-						has_trait = trait_SPR_stalinist_loyalties
-					}
-					remove_unit_leader_trait = trait_SPR_stalinist_loyalties
-				}
-				if = {
-					limit = {
-						NOT = { has_trait = trait_SPR_anti_stalinist_loyalties }
-					}
-					add_unit_leader_trait = trait_SPR_anti_stalinist_loyalties
-				}
 			}
 			set_country_flag = SOV_go_go_general_flag
 		}
@@ -1428,18 +1404,6 @@ SOV_manage_spanish_generals_exiled_in_ussr_effect = {
 						has_trait = trait_SPR_republican_loyalties
 					}
 					remove_unit_leader_trait = trait_SPR_republican_loyalties
-				}
-				if = {
-					limit = {
-						has_trait = trait_SPR_stalinist_loyalties
-					}
-					remove_unit_leader_trait = trait_SPR_stalinist_loyalties
-				}
-				if = {
-					limit = {
-						NOT = { has_trait = trait_SPR_anti_stalinist_loyalties }
-					}
-					add_unit_leader_trait = trait_SPR_anti_stalinist_loyalties
 				}
 			}
 			set_country_flag = SOV_go_go_general_flag

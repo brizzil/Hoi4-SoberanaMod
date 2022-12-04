@@ -2054,23 +2054,7 @@ ideas = {
 			}
 		}
 
-		SOV_agents_in_the_stalinist_command_poum = {
 
-			picture = generic_spy_political
-
-			removal_cost = -1
-
-			allowed = {
-				always = no # Added via event
-			}
-
-			targeted_modifier = {
-				tag = SPD
-				attack_bonus_against = 0.15
-				defense_bonus_against = 0.25
-				breakthrough_bonus_against = 0.15
-			}
-		}
 
 ###  ##   ##  ##  ###  ## ###     ### ###  ###  ##   ##
 #   #  # #   #  #  #  #    #       #  #  # #   #  # #   {~._.~}

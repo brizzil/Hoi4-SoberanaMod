@@ -902,7 +902,6 @@ SOV_dont_support_whites = {
 
 	allowed = { has_dlc = "No Step Back" }
 	enable = {
-		SOV = { SOV_is_exiles = yes}
 		NOT = {
 			tag = SOV
 		}

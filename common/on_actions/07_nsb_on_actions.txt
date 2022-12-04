@@ -308,61 +308,8 @@ on_actions = {
 						disband = no
 					}
 				}
-				IF = { 
-					limit = { SOV_is_left_opposition = yes } 
-					delete_unit_template_and_units = {
-						division_template = "Trotskyist Workers' Militia"
-						disband = no
-					}
-					delete_unit_template_and_units = {
-						division_template = "Trotskyist Peasant Militia"
-						disband = no
-					}
-					delete_unit_template_and_units = {
-						division_template = "International Brigades"
-						disband = no
-					}
-				}
-
-				IF = { 
-					limit = { SOV_is_right_opposition = yes } 
-					delete_unit_template_and_units = {
-						division_template = "Bukharinist Workers' Militia"
-						disband = no
-					}
-					delete_unit_template_and_units = {
-						division_template = "Bukharinist Peasant Militia"
-						disband = no
-					}
-					delete_unit_template_and_units = {
-						division_template = "Japanese Expeditionary Force"
-						disband = no
-					}
-				}
-				IF = { 
-					limit = { SOV_is_exiles = yes } 
-					delete_unit_template_and_units = {
-						division_template = "Ruki"
-						disband = no
-					}
-					
-					delete_unit_template_and_units = {
-						division_template = "Japanese Expeditionary Force"
-						disband = no
-					}
-				}
 				clr_global_flag = SOV_soviet_civil_war
 				set_global_flag = SOV_soviet_civil_war_over
-				IF = {
-					limit = { ROOT = { NOT = { SOV_is_stalinist = yes } } } 
-					SOV = { 
-						country_event = {
-							id = NSB_soviet_civil_war_common.001 
-							days = 1
-							random_hours = 8
-						}
-					} # Trigger the Post Civil War effects
-				}
 			}
 			#Make Danzig demilitarised again
 			if = {
